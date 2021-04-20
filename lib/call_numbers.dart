@@ -16,7 +16,8 @@ class _PageOneState extends State<PageOne> {
       BasicMessageChannel('com.appNumber/demo', StringCodec());
   String link = "";
   String _phoneNumber = "";
-  String rating = '';
+  String _numberResult = "";
+  String rating = "";
   int iconState = 0;
 
   @override
@@ -33,24 +34,37 @@ class _PageOneState extends State<PageOne> {
       (String message) async {
         message = message.replaceAll(new RegExp(r'[^\w\s]+'), '');
         message = message.substring(1);
-        print(message);
         print("Received phone number = $message");
         setState(() {
           _phoneNumber = message;
-          iconState = 1;
         });
         link = 'phonenumber?number=$_phoneNumber';
         var api = GetPostApi(link: link);
         api.fetchPost().then((post) {
           setState(() {
-            rating = post.title.toString();
+            _numberResult = post.title.toString();
+            rating = post.rating.toString();
           });
         }, onError: (error) {
           setState(() {
-            rating = error.toString();
+            _numberResult = error.toString();
           });
         });
-        showNotification('Alert','You have received a spam call from ' + _phoneNumber);
+        print('This number is ' + rating);
+        if (rating == 'spam') {
+          showNotification('Alert','You have received a spam call from ' + _phoneNumber);
+          setState(() {
+            iconState = 2;
+          });
+        } else if (rating == 'ham') {
+          setState(() {
+            iconState = 1;
+          });
+        } else if (rating == "") {
+          setState(() {
+            iconState = 0;
+          });
+        }
         return 'OK';
       },
     );
@@ -100,7 +114,7 @@ class _PageOneState extends State<PageOne> {
         title: Text('Incoming Numbers'),
       ),
       body: ListView(
-        children: <Widget>[_buildPage(_phoneNumber, rating)],
+        children: <Widget>[_buildPage(_phoneNumber, _numberResult)],
       ),
     );
   }

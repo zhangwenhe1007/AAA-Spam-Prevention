@@ -30,7 +30,6 @@ public class MyBroadcastReceiver extends BroadcastReceiver {
             message.what = 0;
             message.obj = phoneNumber;
             System.out.println("Number received: " + phoneNumber);
-            System.out.println(message);
             handler.sendMessage(message);
             }
         
@@ -56,7 +55,6 @@ public class MyBroadcastReceiver extends BroadcastReceiver {
                         number.what = 2;
                         number.obj = msg_from;
                         System.out.println("Message received: " + msgBody + "From" + msg_from);
-                        System.out.println(msgBody + msg_from);
                         handler.sendMessage(message);
                         handler.sendMessage(number);
                         }

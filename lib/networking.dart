@@ -9,22 +9,22 @@ class GetPostApi {
   GetPostApi({@required this.link});
 
   Future<Post> fetchPost() async {
-    print('https://alerte-anti-arnaqueurs.glitch.me/'+link);
     final response = await http.get(Uri.parse(
-        'https://alerte-anti-arnaqueurs.glitch.me/'+link));
-    print('Sent');
+        'https://alerte-anti-arnaqueurs.herokuapp.com/'+link));
+    print('Successfully sent at' + ' https://alerte-anti-arnaqueurs.herokuapp.com/'+link);
     var post = Post.fromJson(json.decode(response.body));
-    print(post.title);
     return post;
   }
 }
 
 class Post {
   final String title;
-  Post({this.title});
+  final String rating;
+  Post({this.title, this.rating});
   factory Post.fromJson(Map<String, dynamic> json) {
     return Post(
       title: json['title'],
+      rating: json['rating'],
     );
   }
 }

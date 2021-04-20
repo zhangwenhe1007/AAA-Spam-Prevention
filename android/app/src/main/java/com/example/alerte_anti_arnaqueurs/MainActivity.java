@@ -32,19 +32,19 @@ public class MainActivity extends FlutterActivity {
         Handler handler = new Handler() {
             public void handleMessage (final Message msg){
                 if (msg.what == 0){
-                    System.out.println(msg+"======="+msg.obj.toString());
+                    System.out.println(msg.obj.toString() + " is passed to MainActivity");
                     String phoneNumber = msg.obj.toString();
                     BasicMessageChannel MessageChannel = new BasicMessageChannel<Object>(getFlutterEngine().getDartExecutor().getBinaryMessenger(), "com.appNumber/demo", StandardMessageCodec.INSTANCE);
                     MessageChannel.send(phoneNumber);
                 }
                 if (msg.what == 1){
-                    System.out.println(msg + msg.obj.toString());
+                    System.out.println(msg.obj.toString() + " is passed to MainActivity");
                     String messageSms = msg.obj.toString();
                     BasicMessageChannel MessageChannel = new BasicMessageChannel<Object>(getFlutterEngine().getDartExecutor().getBinaryMessenger(), "com.appSms/demo", StandardMessageCodec.INSTANCE);
                     MessageChannel.send(messageSms);
                 }
                 if (msg.what == 2){
-                    System.out.println(msg + msg.obj.toString());
+                    System.out.println(msg.obj.toString() + " is passed to MainActivity");
                     String senderNumber = msg.obj.toString();
                     BasicMessageChannel MessageChannel = new BasicMessageChannel<Object>(getFlutterEngine().getDartExecutor().getBinaryMessenger(), "com.appSender/demo", StandardMessageCodec.INSTANCE);
                     MessageChannel.send(senderNumber);
