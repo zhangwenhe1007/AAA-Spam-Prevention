@@ -41,7 +41,7 @@ class _MyHomePageState extends State<MyHomePage> {
   static const TextStyle optionStyle =
       TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
   static List<Widget> _widgetOptions = <Widget>[
-    PageOne(),
+    PageOne(storage: CounterStorage()),
     PageTwo(),
     MicrophonePage(),
   ];

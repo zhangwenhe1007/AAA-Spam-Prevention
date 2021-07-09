@@ -1,20 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/foundation.dart';
 
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import './networking.dart';
+import './add_data.dart';
 
 import 'dart:async';
-
+import 'dart:convert';
+import 'dart:io';
 
 class PageOne extends StatefulWidget {
+  final CounterStorage storage;
+  PageOne({Key key, @required this.storage}) : super(key: key);
+
   @override
   _PageOneState createState() => _PageOneState();
 }
 
 class _PageOneState extends State<PageOne> {
-  List dataResult;
+  List dataResult = [];
 
   FlutterLocalNotificationsPlugin localNotification2 =
       FlutterLocalNotificationsPlugin();
@@ -30,6 +36,12 @@ class _PageOneState extends State<PageOne> {
   @override
   void initState() {
     super.initState(); //search on this method
+    widget.storage.readMessage().then((value) {
+      setState(() {
+        dataResult = value;
+        print(dataResult);
+      });
+    });
     var androidInitialize =
         AndroidInitializationSettings('@mipmap/ic_notification');
     var iOSInitialize = IOSInitializationSettings();
@@ -74,10 +86,16 @@ class _PageOneState extends State<PageOne> {
             iconState = 0;
           });
         }
+          await widget.storage.writeCounter(_phoneNumber, _numberResult);
+          widget.storage.readMessage().then((value) {
+            setState(() {
+              dataResult = value;
+              print(dataResult);
+            });
+          });
         return 'OK';
       },
     );
-
   }
 
   Future showNotification(String notifTitle, String notifMessage) async {
@@ -123,11 +141,12 @@ class _PageOneState extends State<PageOne> {
         appBar: AppBar(
           title: Text('Incoming Numbers'),
         ),
-        body: pageState != 0
+        body: dataResult.length != 0
             ? ListView(
-                children: <Widget>[
-          _buildPage(_phoneNumber, _numberResult)
-        ],
+                children: dataResult
+                        ?.map<Padding>((list) => _buildPage(list))
+                        ?.toList() ??
+                    [],
               )
             : Container(
                 child: Center(
@@ -148,13 +167,13 @@ class _PageOneState extends State<PageOne> {
     }
   }
 
-  Widget _buildPage(String title, String subtitle) {
+  Widget _buildPage(List list) {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: ListTile(
-          title: Text(title, style: TextStyle(fontSize: 24.0)),
+          title: Text(list[0].toString(), style: TextStyle(fontSize: 24.0)),
           trailing: _buildIcon(),
-          subtitle: Text(subtitle, style: TextStyle(fontSize: 20.0)),
+          subtitle: Text(list[1].toString(), style: TextStyle(fontSize: 20.0)),
           onTap: () {
             _showMyDialog();
           }),

@@ -202,7 +202,7 @@ class _PageTwoState extends State<PageTwo> {
       child: ListTile(
           title: Text(text, style: TextStyle(fontSize: 24.0)),
           trailing: _buildIcon(),
-          subtitle: Text(subtext, style: TextStyle(fontSize: 20.0)),
+          subtitle: Text(subtext),
           onTap: () {
             _showMyDialog();
           }),
