@@ -8,7 +8,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-class CounterStorage {
   Future<String> get _localPath async {
     final directory = await getApplicationDocumentsDirectory();
     return directory.path;
@@ -16,7 +15,7 @@ class CounterStorage {
 
   Future<File> get _localFile async {
     final path = await _localPath;
-    return File('$path/user_data.csv');
+    return File('$path/config.csv');
   }
 
   Future<List> readMessage() async {
@@ -42,4 +41,4 @@ class CounterStorage {
     print(result1);
     file.writeAsStringSync("$result, $result1\r\n", mode: FileMode.write);
   }
-}
+

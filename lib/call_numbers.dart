@@ -2,11 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:csv/csv.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:file_picker/file_picker.dart';
 
 import './networking.dart';
-
 import 'dart:async';
+import 'dart:io';
+import 'dart:convert';
 
+// Path to file: '/data/user/0/com.example.alerte_anti_arnaqueurs/files/<file name>'
 
 class PageOne extends StatefulWidget {
   @override
@@ -14,7 +19,9 @@ class PageOne extends StatefulWidget {
 }
 
 class _PageOneState extends State<PageOne> {
-  List dataResult;
+  List<String> numbers;
+  List<String> numbersDescription;
+  List<String> numbersModify;
 
   FlutterLocalNotificationsPlugin localNotification2 =
       FlutterLocalNotificationsPlugin();
@@ -30,6 +37,28 @@ class _PageOneState extends State<PageOne> {
   @override
   void initState() {
     super.initState(); //search on this method
+    readData('/data/user/0/com.example.alerte_anti_arnaqueurs/files/numbers.csv').then((List value) {
+      setState(() {
+        value.remove('');
+        numbers = value;
+      });
+    });
+
+    readData('/data/user/0/com.example.alerte_anti_arnaqueurs/files/numbers_message.csv').then((List value) {
+      setState(() {
+        value.remove('');
+        numbersDescription = value;
+      });
+    });
+
+    readData('/data/user/0/com.example.alerte_anti_arnaqueurs/files/numbers_modify.csv').then((List value) {
+      setState(() {
+        value.remove('');
+        numbersModify = value;
+        pageState++;
+      });
+    });
+
     var androidInitialize =
         AndroidInitializationSettings('@mipmap/ic_notification');
     var iOSInitialize = IOSInitializationSettings();
@@ -46,6 +75,26 @@ class _PageOneState extends State<PageOne> {
           _phoneNumber = message;
           pageState++;
         });
+            readData('/data/user/0/com.example.alerte_anti_arnaqueurs/files/numbers.csv').then((List value) {
+      setState(() {
+        value.remove('');
+        numbers = value;
+      });
+    });
+
+    readData('/data/user/0/com.example.alerte_anti_arnaqueurs/files/numbers_message.csv').then((List value) {
+      setState(() {
+        value.remove('');
+        numbersDescription = value;
+      });
+    });
+
+    readData('/data/user/0/com.example.alerte_anti_arnaqueurs/files/numbers_modify.csv').then((List value) {
+      setState(() {
+        value.remove('');
+        numbersModify = value;
+      });
+    });
         link = 'phonenumber?number=$_phoneNumber';
         var api = GetPostApi(link: link);
         api.fetchPost().then((post) {
@@ -77,7 +126,6 @@ class _PageOneState extends State<PageOne> {
         return 'OK';
       },
     );
-
   }
 
   Future showNotification(String notifTitle, String notifMessage) async {
@@ -117,6 +165,28 @@ class _PageOneState extends State<PageOne> {
     );
   }
 
+  Future<List> readData(String path) async {
+    final file = File(path);
+    try {
+      // Read the file
+      final contents = await file.readAsString();
+      List content = contents.split('\n');
+      print(content);
+      return content;
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+    //PROBLEM: when writing data, code writes empty strings into the csv files followed by \n
+    Future writeData(String path, String string) async {
+    final file = File(path);
+
+    // Write the file
+    print('This is the string $string');
+    file.writeAsString(string);
+    file.writeAsString('\n');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -124,11 +194,30 @@ class _PageOneState extends State<PageOne> {
           title: Text('Incoming Numbers'),
         ),
         body: pageState != 0
-            ? ListView(
+            ? ListView.builder(
+              itemCount: numbers.length,
+              itemBuilder: (context, index) {
+                return Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: ListTile(
+                      title: Text('${numbers[index]}', style: TextStyle(fontSize: 24.0)),
+                      trailing: _buildIcon(),
+                      subtitle: Text('${numbersDescription[index]}', style: TextStyle(fontSize: 20.0)),
+                      onTap: () {
+                        if ('${numbersModify[index]}' == 'Y') {
+                          _showMyDialog(index);
+                        }
+          }),
+    );
+              }
+            )
+              
+             /* ListView(
                 children: <Widget>[
           _buildPage(_phoneNumber, _numberResult)
         ],
-              )
+              ) */
+
             : Container(
                 child: Center(
                   child: Opacity(
@@ -139,7 +228,6 @@ class _PageOneState extends State<PageOne> {
   }
 
   //ALIGN EMPTY INBOX TEXT AT CENTER, INCREASE SIZE
-
   Widget _buildIcon() {
     if (iconState == 1) {
       return Icon(Icons.check);
@@ -148,7 +236,7 @@ class _PageOneState extends State<PageOne> {
     }
   }
 
-  Widget _buildPage(String title, String subtitle) {
+  /* Widget _buildPage(String title, String subtitle) {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: ListTile(
@@ -159,9 +247,9 @@ class _PageOneState extends State<PageOne> {
             _showMyDialog();
           }),
     );
-  }
+  } */
 
-  Future<void> _showMyDialog() async {
+  Future<void> _showMyDialog(int index) async {
     return showDialog<void>(
       context: context,
       barrierDismissible: true, // user must tap button!
@@ -183,7 +271,12 @@ class _PageOneState extends State<PageOne> {
                 onPressed: () {
                   setState(() {
                     this.iconState = 2;
+                    numbersModify[index] = 'N';
                   });
+                  for (String character in numbersModify) {
+                    print(character);
+                    writeData('/data/user/0/com.example.alerte_anti_arnaqueurs/files/numbers_modify.csv', character);
+                  }
                   Navigator.of(context).pop();
                 },
               ),
@@ -206,3 +299,47 @@ class _PageOneState extends State<PageOne> {
     );
   }
 }
+
+/*Future<List> readMessage() async {
+    final directory = await getApplicationDocumentsDirectory();
+    final path = directory.path;
+    try {
+      final file = File('$path/config.csv');
+      // Read the file
+      final input = file.openRead();
+      final contents = await input
+          .transform(utf8.decoder)
+          .transform(CsvToListConverter())
+          .toList();
+      print(contents);
+      //THIS RETURNS A LIST WITHIN A LIST [[DATA]] SO CONTENTS[0] IS THE FIRST LIST IN THE LIST, REPRESENTING THE FIRST ROW WITH ITS VALUES
+      return contents;
+    } catch (e) {
+      return ['Message unavailable', ''];
+    }
+  } */
+  
+  /* pickFile() async {
+   FilePickerResult result = await FilePicker.platform.pickFiles();
+   if (result != null) {
+     PlatformFile file = result.files.first;
+     final input = new File(file.path).openRead();
+     final fields = await input
+         .transform(utf8.decoder)
+         .transform(new CsvToListConverter())
+         .toList();
+
+     print(fields);
+   }
+ } */
+
+    /*void _loadCSV() async {
+    final directory = await getApplicationDocumentsDirectory();
+    final path = directory.path;
+    final _rawData = await rootBundle.loadString('$path/config.csv');
+    List<List<dynamic>> _listData = CsvToListConverter().convert(_rawData);
+    print(_data);
+    setState(() {
+      _data = _listData;
+    });
+  } */

@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import './networking.dart';
+import 'dart:async';
+import 'dart:io';
+
+// Path to file: '/data/user/0/com.example.alerte_anti_arnaqueurs/files/<file name>'
 
 class PageTwo extends StatefulWidget {
   @override
@@ -25,11 +29,41 @@ class _PageTwoState extends State<PageTwo> {
   String _ratingPhone = "";
   int iconState = 0;
   int pageState = 0;
+
+  List<String> sms;
+  List<String> smsDescription;
+  List<String> smsModify;
+
   var send = false;
 
   @override
   void initState() {
     super.initState();
+
+    readData('/data/user/0/com.example.alerte_anti_arnaqueurs/files/sms.csv').then((List value) {
+      setState(() {
+        value.remove('');
+        sms = value;
+      });
+    });
+
+    readData('/data/user/0/com.example.alerte_anti_arnaqueurs/files/sms_description.csv').then((List value) {
+      setState(() {
+        value.remove('');
+        smsDescription = value;
+      });
+    });
+
+    readData('/data/user/0/com.example.alerte_anti_arnaqueurs/files/sms_modify.csv').then((List value) {
+      setState(() {
+        value.remove('');
+        smsModify = value;
+        pageState++;
+      });
+    });
+
+
+
     var androidInitialize =
         AndroidInitializationSettings('@mipmap/ic_notification');
     var iOSInitialize = IOSInitializationSettings();
@@ -46,6 +80,28 @@ class _PageTwoState extends State<PageTwo> {
         _smsMessage = message;
         pageState++;
       });
+
+    readData('/data/user/0/com.example.alerte_anti_arnaqueurs/files/sms.csv').then((List value) {
+      setState(() {
+        value.remove('');
+        sms = value;
+      });
+    });
+
+    readData('/data/user/0/com.example.alerte_anti_arnaqueurs/files/sms_description.csv').then((List value) {
+      setState(() {
+        value.remove('');
+        smsDescription = value;
+      });
+    });
+
+    readData('/data/user/0/com.example.alerte_anti_arnaqueurs/files/sms_modify.csv').then((List value) {
+      setState(() {
+        value.remove('');
+        smsModify = value;
+        pageState++;
+      });
+    });
 
       link = 'message?sms=$_smsMessage';
       var api = GetPostApi(link: link);
@@ -165,6 +221,29 @@ class _PageTwoState extends State<PageTwo> {
     );
   }
 
+    Future<List> readData(String path) async {
+    final file = File(path);
+    try {
+      // Read the file
+      final contents = await file.readAsString();
+      List content = contents.split('\n');
+      print(content);
+      return content;
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+  Future writeData(String path, String string) async {
+    final file = File(path);
+
+    // Write the file
+    print('This is the string $string');
+    file.writeAsString(string);
+    file.writeAsString('\n');
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -172,12 +251,33 @@ class _PageTwoState extends State<PageTwo> {
         title: Text('Incoming SMS'),
       ),
       body: pageState != 0
-      ? ListView(
+      ? ListView.builder(
+              itemCount: sms.length,
+              itemBuilder: (context, index) {
+                return Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: ListTile(
+                      title: Text('${sms[index]}', style: TextStyle(fontSize: 24.0)),
+                      trailing: _buildIcon(),
+                      subtitle: Text('${smsDescription[index]}', style: TextStyle(fontSize: 20.0)),
+                      onTap: () {
+                        if ('${smsModify[index]}' == 'Y') {
+                          _showMyDialog(index);
+                        }
+          }),
+    );
+              }
+            )
+      
+      
+      /* ListView(
         children: <Widget>[
           _buildPage(_smsMessage,
               _senderNumber + "" + _phoneResult + " " + _smsResult)
         ],
-      )
+      ) */
+
+
       : Container(
         child: Center(
                   child: Opacity(
@@ -196,7 +296,7 @@ class _PageTwoState extends State<PageTwo> {
     }
   }
 
-  Widget _buildPage(String text, String subtext) {
+  /* Widget _buildPage(String text, String subtext) {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: ListTile(
@@ -207,9 +307,9 @@ class _PageTwoState extends State<PageTwo> {
             _showMyDialog();
           }),
     );
-  }
+  } */
 
-  Future<void> _showMyDialog() async {
+  Future<void> _showMyDialog(int index) async {
     return showDialog<void>(
       context: context,
       barrierDismissible: true, // user must tap button!
@@ -234,7 +334,12 @@ class _PageTwoState extends State<PageTwo> {
                 onPressed: () {
                   setState(() {
                     this.iconState = 2;
+                    smsModify[index] = 'N';
                   });
+                  for (String character in smsModify) {
+                    print(character);
+                    writeData('/data/user/0/com.example.alerte_anti_arnaqueurs/files/sms_modify.csv', character);
+                  }
                   Navigator.of(context).pop();
                 },
               ),

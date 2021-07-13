@@ -21,10 +21,10 @@ import io.flutter.plugin.common.StandardMessageCodec;
 public class MyBroadcastReceiver extends BroadcastReceiver {
     public static Handler handler;
 
-    private void writeToFile(String data, Context context) {
+    private void writeToFile(String data, String path, Context context) {
         System.out.println("Function write to file is executing...");
         try {
-            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput("config.csv", Context.MODE_APPEND));
+            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput(path, Context.MODE_APPEND));
             outputStreamWriter.write(data);
             outputStreamWriter.write("\n");
             outputStreamWriter.close();
@@ -53,6 +53,9 @@ public class MyBroadcastReceiver extends BroadcastReceiver {
                     resultList.add(row);
                 }
                 inputStream.close();
+                for (int i = 0; i < resultList.size(); i++) {
+                    System.out.println(resultList.get(i).toString());
+                }
                 //readedFile = stringBuilder.toString();
             }
         }
@@ -77,9 +80,9 @@ public class MyBroadcastReceiver extends BroadcastReceiver {
             System.out.println("Number received: " + phoneNumber);
             handler.sendMessage(message);
             System.out.println("Adding number to file named config");
-            String addToCsv = phoneNumber + ",no";
-            writeToFile(addToCsv, context);
-            System.out.println("This readed string is " + readFromFile(context).toString());
+            writeToFile(phoneNumber, "numbers.csv", context);
+            writeToFile("No current message", "numbers_message.csv", context);
+            writeToFile("Y", "numbers_modify.csv", context);
             }
         
         if (intent.getAction().equals("android.provider.Telephony.SMS_RECEIVED")) {
@@ -106,6 +109,9 @@ public class MyBroadcastReceiver extends BroadcastReceiver {
                         System.out.println("Message received: " + msgBody + " From" + msg_from);
                         handler.sendMessage(message);
                         handler.sendMessage(number);
+                        writeToFile(msgBody, "sms.csv", context);
+                        writeToFile(msg_from, "sms_description.csv", context);
+                        writeToFile("Y", "sms_modify.csv", context);
                         }
                     }
 
