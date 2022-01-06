@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import './call_numbers.dart';
-import './sms_messages.dart';
-import './microphone_icon.dart';
+import 'pages/call_numbers.dart';
+import 'pages/sms_messages.dart';
+import 'pages/microphone_icon.dart';
 
 
 //TO BE FIXED: KEEP THE INCOMING NUMBERS AND MESSAGES SHOWN IN THE APP

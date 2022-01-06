@@ -23,7 +23,6 @@ class _MicrophonePageState extends State<MicrophonePage> {
     );
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
