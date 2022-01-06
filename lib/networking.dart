@@ -4,27 +4,33 @@ import 'dart:async';
 import 'dart:convert';
 
 
+ //CHANGED RATING FROM STRING TO AN ID: 1 OR 0.
+
 class GetPostApi {
   String link;
   GetPostApi({@required this.link});
 
   Future<Post> fetchPost() async {
     final response = await http.get(Uri.parse(
-        'https://alerte-anti-arnaqueurs.herokuapp.com/'+link));
-    print('Successfully sent at' + ' https://alerte-anti-arnaqueurs.herokuapp.com/'+link);
+        'https://serveronrepl.xinlei.repl.co'+link));
+    print('Successfully sent at' + ' https://serveronrepl.xinlei.repl.co'+link);
     var post = Post.fromJson(json.decode(response.body));
     return post;
   }
 }
 
 class Post {
-  final String title;
-  final String rating;
-  Post({this.title, this.rating});
+  final String messageNum;
+  final String messageSms;
+  final int ratingNum;
+  final int ratingSms;
+  Post({this.messageNum, this.messageSms, this.ratingNum, this.ratingSms});
   factory Post.fromJson(Map<String, dynamic> json) {
     return Post(
-      title: json['title'],
-      rating: json['rating'],
+      messageNum: json['message_num'],
+      ratingNum: json['rating_num'],
+      messageSms: json['message_sms'],
+      ratingSms: json['rating_sms'],
     );
   }
 }

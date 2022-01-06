@@ -11,60 +11,29 @@ import android.telephony.SmsMessage;
 import android.text.TextUtils;
 import android.util.Log;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.net.URLConnection;
+import java.net.HttpURLConnection;
+
+import java.io.InputStream;
+import java.io.Reader;
+
+import java.net.*;
+import java.nio.charset.Charset;
+
 import java.io.*;
 import java.util.*;
-
 import io.flutter.embedding.android.FlutterActivity;
 import io.flutter.plugin.common.BasicMessageChannel;
 import io.flutter.plugin.common.StandardMessageCodec;
 
 public class MyBroadcastReceiver extends BroadcastReceiver {
     public static Handler handler;
-
-    private void writeToFile(String data, Context context) {
-        System.out.println("Function write to file is executing...");
-        try {
-            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput("config.csv", Context.MODE_APPEND));
-            outputStreamWriter.write(data);
-            outputStreamWriter.write("\n");
-            outputStreamWriter.close();
-            System.out.println("Successfully added data");
-        }
-        catch (IOException e) {
-            Log.e("Exception", "File write failed: " + e.toString());
-        } 
-    }
-
-    private List readFromFile(Context context) {
-        List resultList = new ArrayList();
-
-        try {
-            InputStream inputStream = context.openFileInput("config.csv");
-            if ( inputStream != null ) {
-                InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-                String csvLine;
-                StringBuilder stringBuilder = new StringBuilder();
-    //Fix so that reader reads all lines
-                while ( (csvLine = bufferedReader.readLine()) != null ) {
-                    //stringBuilder.append("\n").append(receiveString);
-                    System.out.println(csvLine);
-                    String[] row = csvLine.split(",");
-                    resultList.add(row);
-                }
-                inputStream.close();
-                //readedFile = stringBuilder.toString();
-            }
-        }
-        catch (FileNotFoundException e) {
-            Log.e("login activity", "File not found: " + e.toString());
-        } catch (IOException e) {
-            Log.e("login activity", "Can not read file: " + e.toString());
-        }
     
-        return resultList;
-    }
-
     @Override
     public void onReceive(Context context, Intent intent) {
 
@@ -76,10 +45,6 @@ public class MyBroadcastReceiver extends BroadcastReceiver {
             message.obj = phoneNumber;
             System.out.println("Number received: " + phoneNumber);
             handler.sendMessage(message);
-            System.out.println("Adding number to file named config");
-            String addToCsv = phoneNumber + ",no";
-            writeToFile(addToCsv, context);
-            System.out.println("This readed string is " + readFromFile(context).toString());
             }
         
         if (intent.getAction().equals("android.provider.Telephony.SMS_RECEIVED")) {
@@ -96,16 +61,22 @@ public class MyBroadcastReceiver extends BroadcastReceiver {
                         msg_from = msgs[i].getOriginatingAddress();
                         msgBody = msgs[i].getMessageBody();
 
+
+//CHANGED THE SMS INTO ONE SINGLE MESSAGE CHANNEL. PUT THE NUMBER AND THE SMS TOGETHER
+
                     if (!TextUtils.isEmpty(msgBody) && !TextUtils.isEmpty(msg_from)) {
+
+                        //Create an arrayList containing both the sms and the number of the sender
+                        //ArrayList<String> messages = new ArrayList<String>();
+
+                        HashMap<Integer, String> messages = new HashMap<Integer, String>();
+                        messages.put(1,msgBody);
+                        messages.put(2,msg_from);
                         Message message = new Message();
-                        Message number = new Message();
                         message.what = 1;
-                        message.obj = msgBody;
-                        number.what = 2;
-                        number.obj = msg_from;
+                        message.obj = messages;
                         System.out.println("Message received: " + msgBody + " From" + msg_from);
                         handler.sendMessage(message);
-                        handler.sendMessage(number);
                         }
                     }
 

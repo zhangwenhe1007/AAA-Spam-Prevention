@@ -13,11 +13,15 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import io.flutter.embedding.android.FlutterActivity;
+import io.flutter.embedding.engine.FlutterEngine;
 import io.flutter.plugin.common.BasicMessageChannel;
 import io.flutter.plugin.common.StandardMessageCodec;
+import io.flutter.plugin.common.JSONMessageCodec;
+
 
 
 public class MainActivity extends FlutterActivity {
@@ -38,17 +42,37 @@ public class MainActivity extends FlutterActivity {
                     MessageChannel.send(phoneNumber);
                 }
                 if (msg.what == 1){
-                    System.out.println(msg.obj.toString() + " is passed to MainActivity");
-                    String messageSms = msg.obj.toString();
+                    System.out.println("A list containing SMS and Number is passed to MainActivity");
+
+                    //After much effort, HashMap is the only type that can be passed to flutter with keys and converted into a Dart Map object
+
+                    HashMap<Integer, String> stringValues = (HashMap<Integer, String>)msg.obj;
+
+                    //ArrayList<String> stringValues = (ArrayList<String>)msg.obj;
+                    /*String string1 = "\"" + stringValues.get(0) + "\"";
+                    String string2 = "\"" + stringValues.get(1) + "\"";
+                    stringValues.set(0, string1);
+                    stringValues.set(1, string2); */
+
+                    System.out.println("The following is the msg");
+                    System.out.println(stringValues);
+                    System.out.println(stringValues.get(1));
+                    System.out.println(stringValues.get(2));
+
+                    //Use StandardMessageCodec to pass a list to Flutter via the message channel
+                    //The BasicMessageChannel is one of the three platform channels in Flutter. It is used to pass raw data coded in bytes.
+
                     BasicMessageChannel MessageChannel = new BasicMessageChannel<Object>(getFlutterEngine().getDartExecutor().getBinaryMessenger(), "com.appSms/demo", StandardMessageCodec.INSTANCE);
-                    MessageChannel.send(messageSms);
+                    MessageChannel.send(stringValues);
+
                 }
+                /*
                 if (msg.what == 2){
                     System.out.println(msg.obj.toString() + " is passed to MainActivity");
                     String senderNumber = msg.obj.toString();
                     BasicMessageChannel MessageChannel = new BasicMessageChannel<Object>(getFlutterEngine().getDartExecutor().getBinaryMessenger(), "com.appSender/demo", StandardMessageCodec.INSTANCE);
                     MessageChannel.send(senderNumber);
-                }
+                } */
             }
 
         };
