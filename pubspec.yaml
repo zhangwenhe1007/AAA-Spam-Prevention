@@ -35,6 +35,9 @@ dependencies:
   sqflite:
   file_picker: ^3.0.3
 
+  #here, i am including the tflite package necessary to support the BERT deep learning model
+  tflite_flutter: ^0.9.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -80,3 +83,8 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+
+
+  #here, i am including the assets folder, which contains my tflite model
+  assets:
+    - assets/
