@@ -2,11 +2,17 @@ import 'package:flutter/material.dart';
 import 'pages/call_numbers.dart';
 import 'pages/sms_messages.dart';
 import 'pages/microphone_icon.dart';
+import 'classifier.dart';
 //import 'package:tflite_flutter/tflite_flutter.dart';
 
 //TO BE FIXED: KEEP THE INCOMING NUMBERS AND MESSAGES SHOWN IN THE APP
 
 void main() {
+  //If I need it to print something, I need to run the the app, and check in the debug console
+  print('start');
+  Classifier classy = new Classifier();
+  //classy._getInfo();
+
   runApp(MyApp());
 }
 
@@ -35,7 +41,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
   int _selectedIndex = 0;
   static const TextStyle optionStyle =
       TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
