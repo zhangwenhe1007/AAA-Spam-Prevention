@@ -4,8 +4,6 @@ import 'pages/sms_messages.dart';
 import 'pages/microphone_icon.dart';
 
 
-//TO BE FIXED: KEEP THE INCOMING NUMBERS AND MESSAGES SHOWN IN THE APP
-
 void main() {
   runApp(MyApp());
 }

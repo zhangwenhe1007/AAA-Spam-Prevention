@@ -13,7 +13,7 @@ class DBProvider {
 
   Future<Database> initDB() async {
     final database =  openDatabase(
-        join(await getDatabasesPath(), 'numbers_database.db'),
+        join(await getDatabasesPath(), 'history_database.db'),
         onCreate: (db, version) async {
           await db.execute(
             'CREATE TABLE numbers(number TEXT PRIMARY KEY, result TEXT, rating INTEGER)',
