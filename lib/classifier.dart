@@ -11,25 +11,28 @@ import "package:tflite_flutter/tflite_flutter.dart";
 
 class Classifier {
   //Here, I am creating a variable for the name of my file, which is vocab file, situated in assets
-  String _vocabFile = 'assets/final_text_classifier_vocabulary.txt';
-  String _modelFile = 'assets/text_classifier.tflite';
+  final _vocabFile = "final_text_classifier_vocabulary.txt";
+  final _modelFile = "model.tflite";
 
   // TensorFlow Lite Interpreter object
   Interpreter _interpreter;
+
+  //Here, I am creating a map, to the right,there is the index of the the value, and to the left, there is the string itself
+  Map<String, int> _dict;
 
   //I think this is the default size for the text in my model
   final int _sentenceLen = 128;
 
   //THis will be for the symbols that i see.
-  final String start = '[PAD]';
-  final String pad = '[PAD]';
-  final String unk = '[unused0]';
+  final String start = "[PAD]";
+  final String pad = "[PAD]";
+  final String unk = "[unused0]";
 
-  //Here, I am creating a map, to the right,there is the index of the the value, and to the left, there is the string itself
-  Map<String, int> _dict;
+  
 
   //JUst like in C++, this is the class constructor, meaning that everytime someone calls this class, the function _loadDictionary() will be runned
   Classifier() {
+    
     // Load model when the classifier is initialized.
     _loadModel();
     _loadDictionary();
@@ -93,4 +96,21 @@ class Classifier {
     // returning List<List<double>> as our interpreter input tensor expects the shape, [1,256]
     return [vec];
   }
+
+
+  List<double> classify(String rawText) {
+    // tokenizeInputText returns List<List<double>>
+    // of shape [1, 256].
+    List<List<double>> input = tokenizeInputText(rawText);
+
+    // output of shape [1,2].
+    var output = List<double>.filled(2, 0).reshape([1, 2]);
+
+    // The run method will run inference and
+    // store the resulting values in output.
+    _interpreter.run(input, output);
+
+    return [output[0][0], output[0][1]];
+  }
+
 }

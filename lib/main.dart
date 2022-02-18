@@ -11,6 +11,8 @@ void main() {
   //If I need it to print something, I need to run the the app, and check in the debug console
   print('start');
   Classifier classy = new Classifier();
+  print(classy.classify("hello world!"));
+  
   //classy._getInfo();
 
   runApp(MyApp());
