@@ -55,11 +55,11 @@ class _PageTwoState extends State<PageTwo> {
           showNotification(
               'ALERT',
               _senderNumber +
-                  ' has previously been marked spam! The content of the message may be dangerous!');
+                  ' has previously been marked spam! <br /> Its may be dangerous!');
           sentData = true;
         } else if (post.ratingSms.toInt() == 2 && sentData == false) {
           showNotification('Alert',
-              'You have received a spam message from ' + _senderNumber);
+              'SPAM message from ' + _senderNumber +'!');
           sentData = true;
         }
 
@@ -73,7 +73,7 @@ class _PageTwoState extends State<PageTwo> {
             message: _smsMessage,
           );
           DBProvider.db.insertData(newDBUser, 'messages');
-          print('New message arrived, the message is $newDBUser');
+          print('New message! $newDBUser');
           _getData();
           //This sends the message to our message database with the prediction made by the model.
           //We must turn the prediction into string spam or ham, because the labels in database are strings
@@ -92,7 +92,7 @@ class _PageTwoState extends State<PageTwo> {
             message: "",
           );
           DBProvider.db.insertData(newDBUser, 'messages');
-          print('New message arrived, but there is an error $newDBUser');
+          print('New message received, but an error occured. $newDBUser');
           _getData();
         });
       });
@@ -285,16 +285,19 @@ class _PageTwoState extends State<PageTwo> {
       padding: const EdgeInsets.all(4.0),
       child: ListTile(
           title: Text(
-            sms.message,
+            sms.number,
             style: TextStyle(fontSize: 20.0),
           ),
-          subtitle: Text(
-              "From " +
-                  sms.number +
-                  ". " +
-                  sms.result_number +
-                  sms.result_message,
-              style: TextStyle(fontSize: 15.0)),
+          
+          subtitle: Column(
+            children:[
+              Text(sms.result_number + sms.result_message,
+                    style: TextStyle(fontSize: 15.0)),
+              Text(sms.message,
+                    style: TextStyle(fontSize: 13.0))     
+                    ]
+            ),
+
           trailing: _buildIcon(sms.rating_number, sms.rating_sms),
           onTap: () {
             _showMyDialog(sms);

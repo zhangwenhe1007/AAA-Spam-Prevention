@@ -6,6 +6,8 @@ import 'pages/microphone_icon.dart';
 
 //TO BE FIXED: KEEP THE INCOMING NUMBERS AND MESSAGES SHOWN IN THE APP
 
+//here, I'll define our primary color
+
 void main() {
   runApp(MyApp());
 }
@@ -18,6 +20,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
+        appBarTheme: AppBarTheme(
+          color: const Color(0xFFD93739),
+        ),
         primarySwatch: Colors.red,
       ),
       home: MyHomePage(title: 'Flutter Demo Home Page'),
@@ -35,7 +40,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
   int _selectedIndex = 0;
   static const TextStyle optionStyle =
       TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
@@ -66,7 +70,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.sms),
-            label: 'SMS Messages',
+            label: 'Messages',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.mic),
