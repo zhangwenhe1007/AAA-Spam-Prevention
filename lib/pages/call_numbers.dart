@@ -50,7 +50,7 @@ class _PageOneState extends State<PageOne> {
 
         //This method sends an http request to server. The post object the a json response.
         api.fetchPost().then((post) {
-
+        
           if (post.ratingNum.toInt() == 2) {
             showNotification(
                 'Alert', 'You have received a spam call from ' + message);
@@ -249,7 +249,8 @@ class _PageOneState extends State<PageOne> {
                     DBProvider.db.updateData(num, 'numbers');
                     _getData();
                     String add_number = num.number;
-                    GetPostApi(link: '/addphonenumber?number=$add_number').fetchPost();
+                    GetPostApi(link: '/addphonenumber?number=$add_number')
+                        .fetchPost();
                   });
                   Navigator.of(context).pop();
                 },

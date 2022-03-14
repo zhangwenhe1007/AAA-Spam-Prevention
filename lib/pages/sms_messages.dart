@@ -79,7 +79,7 @@ class _PageTwoState extends State<PageTwo> {
           //We must turn the prediction into string spam or ham, because the labels in database are strings
           String rating1 = post.ratingSms == 2 ? 'spam' : 'ham';
           GetPostApi(link: '/addmessage?sms=$_smsMessage&rating=$rating1')
-                        .fetchPost();
+              .fetchPost();
         });
       }, onError: (error) {
         setState(() {
@@ -315,7 +315,8 @@ class _PageTwoState extends State<PageTwo> {
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
-                Text('Is this message spam? If so, the sender will be marked as spam.'),
+                Text(
+                    'Is this message spam? If so, the sender will be marked as spam.'),
               ],
             ),
           ),
