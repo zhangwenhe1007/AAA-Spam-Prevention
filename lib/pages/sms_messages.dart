@@ -44,7 +44,7 @@ class _PageTwoState extends State<PageTwo> {
 
 //TO be changed, _senderNumber has to be the sender`s name if the number is already registered in the contact list!
       _senderNumber = dict[2].replaceAll(RegExp(r"[^\s\w]"), '');
-      
+
       _smsMessage = dict[1];
 
       print("Received SMS = $_smsMessage");
@@ -60,8 +60,7 @@ class _PageTwoState extends State<PageTwo> {
                   ' has previously been marked spam! It may be dangerous!');
           sentData = true;
         } else if (post.ratingSms.toInt() == 2 && sentData == false) {
-          showNotification('Alert',
-              'SPAM message from ' + _senderNumber +'!');
+          showNotification('Alert', 'SPAM message from ' + _senderNumber + '!');
           sentData = true;
         }
 
@@ -81,7 +80,7 @@ class _PageTwoState extends State<PageTwo> {
           //We must turn the prediction into string spam or ham, because the labels in database are strings
           String rating1 = post.ratingSms == 2 ? 'spam' : 'ham';
           GetPostApi(link: '/addmessage?sms=$_smsMessage&rating=$rating1')
-                        .fetchPost();
+              .fetchPost();
         });
       }, onError: (error) {
         setState(() {
@@ -246,7 +245,7 @@ class _PageTwoState extends State<PageTwo> {
                       padding: const EdgeInsets.all(16.0),
                       itemCount: sms.length,
                       itemBuilder: (context, i) {
-                        return _buildTile(sms[i]);
+                        return _buildTile(sms[sms.length - (i + 1)]);
                       }),
                 );
               } else {
@@ -290,16 +289,11 @@ class _PageTwoState extends State<PageTwo> {
             sms.number,
             style: TextStyle(fontSize: 20.0),
           ),
-          
-          subtitle: Column(
-            children:[
-              Text("Mesage Location: " + sms.result_number + sms.result_message,
-                    style: TextStyle(fontSize: 15.0)),
-              Text(sms.message,
-                    style: TextStyle(fontSize: 13.0))     
-                    ]
-            ),
-
+          subtitle: Column(children: [
+            Text("Mesage Location: " + sms.result_number + sms.result_message,
+                style: TextStyle(fontSize: 15.0)),
+            Text(sms.message, style: TextStyle(fontSize: 13.0))
+          ]),
           trailing: _buildIcon(sms.rating_number, sms.rating_sms),
           onTap: () {
             _showMyDialog(sms);
@@ -315,15 +309,16 @@ class _PageTwoState extends State<PageTwo> {
       context: context,
       barrierDismissible: true, // user must tap button!
       builder: (BuildContext context) {
-        return AlertDialog(  
-            title: Text('Contact information'),
-            content: SingleChildScrollView(
-              child: ListBody(
-                children: <Widget>[
-                  Text('Is this message spam? If so, the sender will be marked as spam.'),
-                ],
-              ),
+        return AlertDialog(
+          title: Text('Contact information'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text(
+                    'Is this message spam? If so, the sender will be marked as spam.'),
+              ],
             ),
+          ),
           //)
 
           actions: <Widget>[
