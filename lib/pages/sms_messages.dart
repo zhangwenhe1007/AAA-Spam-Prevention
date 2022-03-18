@@ -12,7 +12,7 @@ class PageTwo extends StatefulWidget {
 }
 
 class _PageTwoState extends State<PageTwo> {
-  bool sentData = false;
+  
   List<Messages> sms = [];
   String _smsMessage = "";
   String _senderNumber = "";
@@ -39,6 +39,7 @@ class _PageTwoState extends State<PageTwo> {
         onSelectNotification: onSelectNotif);
 
     _channel2.setMessageHandler((Object messages) async {
+      bool sentData = false;
       //Convert the Object (type is Internal Linked Map) into a Dart Map object
       Map<int, String> dict = Map<int, String>.from(messages);
 
