@@ -43,7 +43,9 @@ class _PageTwoState extends State<PageTwo> {
       //Convert the Object (type is Internal Linked Map) into a Dart Map object
       Map<int, String> dict = Map<int, String>.from(messages);
 
+//TO be changed, _senderNumber has to be the sender`s name if the number is already registered in the contact list!
       _senderNumber = dict[2].replaceAll(RegExp(r"[^\s\w]"), '');
+
       _smsMessage = dict[1];
 
       print("Received SMS = $_smsMessage");
@@ -56,11 +58,10 @@ class _PageTwoState extends State<PageTwo> {
           showNotification(
               'ALERT',
               _senderNumber +
-                  ' has previously been marked spam! The content of the message may be dangerous!');
+                  ' has previously been marked spam! It may be dangerous!');
           sentData = true;
         } else if (post.ratingSms.toInt() == 2 && sentData == false) {
-          showNotification('Alert',
-              'You have received a spam message from ' + _senderNumber);
+          showNotification('Alert', 'SPAM message from ' + _senderNumber + '!');
           sentData = true;
         }
 
@@ -74,13 +75,13 @@ class _PageTwoState extends State<PageTwo> {
             message: _smsMessage,
           );
           DBProvider.db.insertData(newDBUser, 'messages');
-          print('New message arrived, the message is $newDBUser');
+          print('New message! $newDBUser');
           _getData();
           //This sends the message to our message database with the prediction made by the model.
           //We must turn the prediction into string spam or ham, because the labels in database are strings
           String rating1 = post.ratingSms == 2 ? 'spam' : 'ham';
           GetPostApi(link: '/addmessage?sms=$_smsMessage&rating=$rating1')
-                        .fetchPost();
+              .fetchPost();
         });
       }, onError: (error) {
         setState(() {
@@ -93,7 +94,7 @@ class _PageTwoState extends State<PageTwo> {
             message: "",
           );
           DBProvider.db.insertData(newDBUser, 'messages');
-          print('New message arrived, but there is an error $newDBUser');
+          print('New message received, but an error occured. $newDBUser');
           _getData();
         });
       });
@@ -245,7 +246,7 @@ class _PageTwoState extends State<PageTwo> {
                       padding: const EdgeInsets.all(16.0),
                       itemCount: sms.length,
                       itemBuilder: (context, i) {
-                        return _buildTile(sms[i]);
+                        return _buildTile(sms[sms.length - (i + 1)]);
                       }),
                 );
               } else {
@@ -286,16 +287,14 @@ class _PageTwoState extends State<PageTwo> {
       padding: const EdgeInsets.all(4.0),
       child: ListTile(
           title: Text(
-            sms.message,
+            sms.number,
             style: TextStyle(fontSize: 20.0),
           ),
-          subtitle: Text(
-              "From " +
-                  sms.number +
-                  ". " +
-                  sms.result_number +
-                  sms.result_message,
-              style: TextStyle(fontSize: 15.0)),
+          subtitle: Column(children: [
+            Text("Mesage Location: " + sms.result_number + sms.result_message,
+                style: TextStyle(fontSize: 15.0)),
+            Text(sms.message, style: TextStyle(fontSize: 13.0))
+          ]),
           trailing: _buildIcon(sms.rating_number, sms.rating_sms),
           onTap: () {
             _showMyDialog(sms);
@@ -312,14 +311,17 @@ class _PageTwoState extends State<PageTwo> {
       barrierDismissible: true, // user must tap button!
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Update information'),
+          title: Text('Contact information'),
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
-                Text('Is this message spam? If so, the sender will be marked as spam.'),
+                Text(
+                    'Is this message spam? If so, the sender will be marked as spam.'),
               ],
             ),
           ),
+          //)
+
           actions: <Widget>[
             Padding(
               padding: const EdgeInsets.only(right: 75.0),

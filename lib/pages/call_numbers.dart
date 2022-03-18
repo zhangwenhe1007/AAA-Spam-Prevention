@@ -50,7 +50,6 @@ class _PageOneState extends State<PageOne> {
 
         //This method sends an http request to server. The post object the a json response.
         api.fetchPost().then((post) {
-
           if (post.ratingNum.toInt() == 2) {
             showNotification(
                 'Alert', 'You have received a spam call from ' + message);
@@ -165,7 +164,7 @@ class _PageOneState extends State<PageOne> {
                       padding: const EdgeInsets.all(16.0),
                       itemCount: num.length,
                       itemBuilder: (context, i) {
-                        return _buildTile(num[i]);
+                        return _buildTile(num[num.length - (i + 1)]);
                       }),
                 );
               } else {
@@ -206,18 +205,26 @@ class _PageOneState extends State<PageOne> {
   //Each message is a tile
   Widget _buildTile(Numbers num) {
     return Padding(
-      padding: const EdgeInsets.all(4.0),
-      child: ListTile(
-          title: Text(
-            num.number,
-            style: TextStyle(fontSize: 20.0),
+        padding: const EdgeInsets.all(4.0),
+        child: Card(
+          shape: Border(
+            right: BorderSide(
+                color: num.rating == 2
+                    ? Colors.redAccent[100]
+                    : Colors.lightGreenAccent[100],
+                width: 5),
           ),
-          subtitle: Text(num.result, style: TextStyle(fontSize: 15.0)),
-          trailing: _buildIcon(num.rating),
-          onTap: () {
-            _showMyDialog(num);
-          }),
-    );
+          child: ListTile(
+              title: Text(
+                num.number,
+                style: TextStyle(fontSize: 20.0),
+              ),
+              subtitle: Text(num.result, style: TextStyle(fontSize: 15.0)),
+              trailing: _buildIcon(num.rating),
+              onTap: () {
+                _showMyDialog(num);
+              }),
+        ));
   }
 
   //When the user clicks on a tile, a dialog box opens.
@@ -249,7 +256,8 @@ class _PageOneState extends State<PageOne> {
                     DBProvider.db.updateData(num, 'numbers');
                     _getData();
                     String add_number = num.number;
-                    GetPostApi(link: '/addphonenumber?number=$add_number').fetchPost();
+                    GetPostApi(link: '/addphonenumber?number=$add_number')
+                        .fetchPost();
                   });
                   Navigator.of(context).pop();
                 },

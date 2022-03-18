@@ -31,6 +31,7 @@ class Post {
       ratingNum: json['rating_num'],
       messageSms: json['message_sms'],
       ratingSms: json['rating_sms'],
+      
     );
   }
 }
