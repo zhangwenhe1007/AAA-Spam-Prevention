@@ -57,7 +57,7 @@ class _PageTwoState extends State<PageTwo> {
           showNotification(
               'ALERT',
               _senderNumber +
-                  ' has previously been marked spam! It may be dangerous!');
+                  ' has previously been marked spam by ' + post.markedNum.toString() +' user(s)! It may be dangerous!');
           sentData = true;
         } else if (post.ratingSms.toInt() == 2 && sentData == false) {
           showNotification('Alert', 'SPAM message from ' + _senderNumber + '!');
