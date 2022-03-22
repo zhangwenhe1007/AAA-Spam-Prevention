@@ -1,8 +1,7 @@
-
 class Numbers {
   final String number;
   final String result;
-
+  final int times_marked;
   //Rating can be modified by the user, do we do not use final
   int rating;
 
@@ -10,6 +9,7 @@ class Numbers {
     this.number,
     this.result,
     this.rating,
+    this.times_marked,
   });
 
   //This method is included inside the Numbers class. It is a method of the class.
@@ -17,11 +17,7 @@ class Numbers {
   // Convert a Numbers into a Map. The keys must correspond to the phone number of the
   // columns in the database.
   Map<String, dynamic> toMap() {
-    return {
-      'number': number,
-      'result': result,
-      'rating': rating
-    };
+    return {'number': number, 'result': result, 'rating': rating};
   }
 
   // Implement toString to make it easier to see information about

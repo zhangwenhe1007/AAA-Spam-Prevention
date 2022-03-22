@@ -61,6 +61,7 @@ class _PageOneState extends State<PageOne> {
               number: message,
               result: post.messageNum.toString(),
               rating: post.ratingNum.toInt(),
+              times_marked: post.markedNum.toInt(),
             );
             DBProvider.db.insertData(newDBUser, 'numbers');
             print('New message arrived, the message is $newDBUser');

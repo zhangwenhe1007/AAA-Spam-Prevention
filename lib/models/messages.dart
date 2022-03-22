@@ -1,10 +1,12 @@
-
 class Messages {
   final String number;
   final String result_number;
   final String result_message;
   final String message;
-  //Rating can be modified by the user, do we do not use final
+
+  //this represents the number of times the number was marked as a spam, it will be changed on the server, not on the phone, so final
+  final int times_marked;
+  //Rating can be modified by the user, we do not use final
   int rating_number;
   int rating_sms;
 
@@ -15,8 +17,8 @@ class Messages {
     this.rating_number,
     this.rating_sms,
     this.message,
+    this.times_marked,
   });
-
 
   Map<String, dynamic> toMap() {
     return {

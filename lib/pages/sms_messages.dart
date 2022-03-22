@@ -72,6 +72,7 @@ class _PageTwoState extends State<PageTwo> {
             rating_number: post.ratingNum.toInt(),
             rating_sms: post.ratingSms.toInt(),
             message: _smsMessage,
+            times_marked: post.markedNum.toInt(),
           );
           DBProvider.db.insertData(newDBUser, 'messages');
           print('New message! $newDBUser');
