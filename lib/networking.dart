@@ -25,7 +25,12 @@ class Post {
   final int ratingNum;
   final int ratingSms;
   final int markedNum;
-  Post({this.messageNum, this.messageSms, this.ratingNum, this.ratingSms, this.markedNum});
+  Post(
+      {this.messageNum,
+      this.messageSms,
+      this.ratingNum,
+      this.ratingSms,
+      this.markedNum});
   factory Post.fromJson(Map<String, dynamic> json) {
     return Post(
       messageNum: json['message_num'],
