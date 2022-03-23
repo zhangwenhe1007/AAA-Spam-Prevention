@@ -291,7 +291,7 @@ class _PageTwoState extends State<PageTwo> {
             style: TextStyle(fontSize: 20.0),
           ),
           subtitle: Column(children: [
-            Text("Mesage Location: " + sms.result_number + sms.result_message,
+            Text("Message Location: " + sms.result_number + sms.result_message,
                 style: TextStyle(fontSize: 15.0)),
             Text(sms.message, style: TextStyle(fontSize: 13.0))
           ]),
