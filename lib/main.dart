@@ -63,18 +63,24 @@ class _MyHomePageState extends State<MyHomePage> {
         children: _widgetOptions,
       ),
       bottomNavigationBar: BottomNavigationBar(
+        //This changes the font of the labels in the bottom navigation bar, i put it to 0
+        selectedFontSize: 0,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.call),
-            label: 'Phone Calls',
+            label: ' ',
+            //label: 'Phone Calls',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.sms),
-            label: 'Messages',
+            label: " ",
+            //label: 'Messages',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.mic),
-            label: 'Vocal Analysis',
+            label: ' ',
+
+            //label: 'Vocal Analysis',
           ),
         ],
         currentIndex: _selectedIndex,
