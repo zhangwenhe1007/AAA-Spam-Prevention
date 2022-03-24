@@ -19,11 +19,10 @@ class Numbers {
   Map<String, dynamic> toMap() {
     return {'number': number, 'result': result, 'rating': rating, 'times_marked': times_marked};
   }
-
   // Implement toString to make it easier to see information about
   // each number when using the print statement.
   @override
   String toString() {
-    return 'Numbers{number: $number, result: $result, rating: $rating, was_marked: $times_marked}';
+    return 'Numbers{number: $number, result: $result, rating: $rating, times_marked: $times_marked}';
   }
 }

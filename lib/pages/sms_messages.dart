@@ -12,6 +12,7 @@ class PageTwo extends StatefulWidget {
 }
 
 class _PageTwoState extends State<PageTwo> {
+  bool sentData = false;
   List<Messages> sms = [];
   String _smsMessage = "";
   String _senderNumber = "";
@@ -38,7 +39,6 @@ class _PageTwoState extends State<PageTwo> {
         onSelectNotification: onSelectNotif);
 
     _channel2.setMessageHandler((Object messages) async {
-      bool sentData = false;
       //Convert the Object (type is Internal Linked Map) into a Dart Map object
       Map<int, String> dict = Map<int, String>.from(messages);
 
@@ -53,18 +53,18 @@ class _PageTwoState extends State<PageTwo> {
           GetPostApi(link: '/message?sms=$_smsMessage&number=$_senderNumber');
 
       await api.fetchPost().then((post) {
+
         if (post != null) {
           if (post.ratingNum.toInt() == 2 && sentData == false) {
-            showNotification(
-                'ALERT',
-                _senderNumber +
-                    ' has previously been marked spam! It may be dangerous!');
-            sentData = true;
-          } else if (post.ratingSms.toInt() == 2 && sentData == false) {
-            showNotification(
-                'Alert', 'SPAM message from ' + _senderNumber + '!');
-            sentData = true;
-          }
+          showNotification(
+              'ALERT',
+              _senderNumber +
+                  ' has previously been marked spam! It may be dangerous!');
+          sentData = true;
+        } else if (post.ratingSms.toInt() == 2 && sentData == false) {
+          showNotification('Alert', 'SPAM message from ' + _senderNumber + '!');
+          sentData = true;
+        }
 
           setState(() {
             var newDBUser = Messages(
@@ -74,9 +74,8 @@ class _PageTwoState extends State<PageTwo> {
               rating_number: post.ratingNum.toInt(),
               rating_sms: post.ratingSms.toInt(),
               message: _smsMessage,
-
               //TO-DO
-              times_marked: post.markedNum.toInt(),
+              times_marked: post.times_marked.toInt(),
             );
             DBProvider.db.insertData(newDBUser, 'messages');
             print('New message! $newDBUser');
@@ -99,11 +98,15 @@ class _PageTwoState extends State<PageTwo> {
             times_marked: 0,
           );
           DBProvider.db.insertData(newDBUser, 'messages');
-          print('Network Error');
+          print('New message! $newDBUser');
           _getData();
+          //This sends the message to our message database with the prediction made by the model.
+          //We must turn the prediction into string spam or ham, because the labels in database are strings
+          String rating1 = post.ratingSms == 2 ? 'spam' : 'ham';
+          GetPostApi(link: '/addmessage?sms=$_smsMessage&rating=$rating1')
+              .fetchPost();
         });
-        }
-      }, onError: (error) {
+      }}, onError: (error) {
         setState(() {
           var newDBUser = Messages(
             number: error.toString(),
@@ -242,7 +245,7 @@ class _PageTwoState extends State<PageTwo> {
     );
   }
 
-  @override
+ @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -325,9 +328,7 @@ class _PageTwoState extends State<PageTwo> {
               style: TextStyle(fontSize: 20.0),
             ),
             subtitle: sms.result_message != '' ? Column(children: [
-              Text("Message Location: " + sms.result_number + sms.result_message,
-                  style: TextStyle(fontSize: 15.0)),
-              Text(sms.message, style: TextStyle(fontSize: 13.0))
+              Text(sms.message, style: TextStyle(fontSize: 16.0))
             ]) : null,
             trailing: _buildIcon(sms.rating_number, sms.rating_sms),
             onTap: () {
