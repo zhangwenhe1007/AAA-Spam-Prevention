@@ -69,6 +69,7 @@ class DBProvider {
               rating_sms: maps[i]['ratingSMS'],
               rating_number: maps[i]['ratingNumber'],
               message: maps[i]['message'],
+              times_marked: maps[i]['markedNum']
             );
           });
       }
@@ -80,7 +81,6 @@ class DBProvider {
   Future<void> updateData(object, String name) async {
     // Get a reference to the database.
     final db = await initDB();
-
     await db.update(
       '$name',
       object.toMap(),
