@@ -3,8 +3,7 @@ import 'package:http/http.dart' as http;
 import 'dart:async';
 import 'dart:convert';
 
-
- //CHANGED RATING FROM STRING TO AN ID: 1 OR 0.
+//CHANGED RATING FROM STRING TO AN ID: 1 OR 0.
 
 class GetPostApi {
   String link;
@@ -44,7 +43,6 @@ class Post {
       ratingNum: json['rating_num'],
       messageSms: json['message_sms'],
       ratingSms: json['rating_sms'],
-      
     );
   }
 }

@@ -67,14 +67,18 @@ class _MyHomePageState extends State<MyHomePage> {
           BottomNavigationBarItem(
             icon: Icon(Icons.call),
             label: 'Phone Calls',
+            //label: 'Phone Calls',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.sms),
-            label: 'Messages',
+            label: "Messages",
+            //label: 'Messages',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.mic),
             label: 'Vocal Analysis',
+
+            //label: 'Vocal Analysis',
           ),
         ],
         currentIndex: _selectedIndex,

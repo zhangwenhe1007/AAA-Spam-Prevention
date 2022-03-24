@@ -80,7 +80,6 @@ class DBProvider {
   Future<void> updateData(object, String name) async {
     // Get a reference to the database.
     final db = await initDB();
-
     await db.update(
       '$name',
       object.toMap(),
