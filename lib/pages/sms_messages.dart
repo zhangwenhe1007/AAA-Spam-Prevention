@@ -316,7 +316,6 @@ class _PageTwoState extends State<PageTwo> {
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
-<<<<<<< HEAD
                 Text('Message Location: ' + sms.result_number,
                     style: TextStyle(fontSize: 14.0)),
                 Text('Probability: ' + sms.result_message,
@@ -331,9 +330,6 @@ class _PageTwoState extends State<PageTwo> {
                 Text("Update Information?", style: TextStyle(fontSize: 20.0)),
                 Text("", style: (TextStyle(fontSize: 10.0))),
                 Text(
-=======
-                Text(
->>>>>>> parent of 9d64b11 (changed the messages)
                     'Is this message spam? If so, the sender will be marked as spam.'),
               ],
             ),

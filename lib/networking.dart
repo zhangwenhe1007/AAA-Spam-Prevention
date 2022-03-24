@@ -25,7 +25,6 @@ class Post {
   final String messageSms;
   final int ratingNum;
   final int ratingSms;
-<<<<<<< HEAD
   int markedNum;
   Post(
       {this.messageNum,
@@ -33,10 +32,6 @@ class Post {
       this.ratingNum,
       this.ratingSms,
       this.markedNum});
-=======
-  final int markedNum;
-  Post({this.messageNum, this.messageSms, this.ratingNum, this.ratingSms, this.markedNum});
->>>>>>> parent of 9d64b11 (changed the messages)
   factory Post.fromJson(Map<String, dynamic> json) {
     return Post(
       messageNum: json['message_num'],
