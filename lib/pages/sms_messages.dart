@@ -16,6 +16,7 @@ class _PageTwoState extends State<PageTwo> {
   List<Messages> sms = [];
   String _smsMessage = "";
   String _senderNumber = "";
+  int notif_id = 0;
 
   FlutterLocalNotificationsPlugin localNotification =
       FlutterLocalNotificationsPlugin();
@@ -53,18 +54,23 @@ class _PageTwoState extends State<PageTwo> {
           GetPostApi(link: '/message?sms=$_smsMessage&number=$_senderNumber');
 
       await api.fetchPost().then((post) {
-
         if (post != null) {
           if (post.ratingNum.toInt() == 2 && sentData == false) {
-          showNotification(
-              'ALERT',
-              _senderNumber +
-                  ' has previously been marked spam! It may be dangerous!');
-          sentData = true;
-        } else if (post.ratingSms.toInt() == 2 && sentData == false) {
-          showNotification('Alert', 'SPAM message from ' + _senderNumber + '!');
-          sentData = true;
-        }
+            showNotification(
+                'ALERT',
+                _senderNumber +
+                    ' has previously been marked spam! It may be dangerous!',
+                notif_id);
+            setState(() {
+              sentData = true;
+            });
+          } else if (post.ratingSms.toInt() == 2 && sentData == false) {
+            showNotification(
+                'Alert', 'SPAM message from ' + _senderNumber + '!', notif_id);
+            setState(() {
+              sentData = true;
+            });
+          }
 
           setState(() {
             var newDBUser = Messages(
@@ -85,28 +91,29 @@ class _PageTwoState extends State<PageTwo> {
             String rating1 = post.ratingSms == 2 ? 'spam' : 'ham';
             GetPostApi(link: '/addmessage?sms=$_smsMessage&rating=$rating1')
                 .fetchPost();
+            notif_id += 1;
+            sentData = false;
           });
         } else {
           setState(() {
-          var newDBUser = Messages(
-            number: 'Network Error',
-            result_number: "",
-            result_message: "",
-            rating_number: 0,
-            rating_sms: 0,
-            message: "",
-            times_marked: 0,
-          );
-          DBProvider.db.insertData(newDBUser, 'messages');
-          print('New message! $newDBUser');
-          _getData();
-          //This sends the message to our message database with the prediction made by the model.
-          //We must turn the prediction into string spam or ham, because the labels in database are strings
-          String rating1 = post.ratingSms == 2 ? 'spam' : 'ham';
-          GetPostApi(link: '/addmessage?sms=$_smsMessage&rating=$rating1')
-              .fetchPost();
-        });
-      }}, onError: (error) {
+            var newDBUser = Messages(
+              number: 'Network Error',
+              result_number: "",
+              result_message: "",
+              rating_number: 0,
+              rating_sms: 0,
+              message: "",
+              times_marked: 0,
+            );
+            DBProvider.db.insertData(newDBUser, 'messages');
+            print('New message! $newDBUser');
+            _getData();
+            //This sends the message to our message database with the prediction made by the model.
+            //We must turn the prediction into string spam or ham, because the labels in database are strings
+            sentData = false;
+          });
+        }
+      }, onError: (error) {
         setState(() {
           var newDBUser = Messages(
             number: error.toString(),
@@ -120,6 +127,7 @@ class _PageTwoState extends State<PageTwo> {
           DBProvider.db.insertData(newDBUser, 'messages');
           print('New message received, but an error occured. $newDBUser');
           _getData();
+          sentData = false;
         });
       });
 
@@ -208,7 +216,8 @@ class _PageTwoState extends State<PageTwo> {
     yield _userData;
   }
 
-  Future showNotification(String notifTitle, String notifMessage) async {
+  Future showNotification(
+      String notifTitle, String notifMessage, notif_id) async {
     print('Notification has been deployed');
     var androidDetails = AndroidNotificationDetails(
       "channelID",
@@ -221,7 +230,7 @@ class _PageTwoState extends State<PageTwo> {
     var generalNotificationDetails =
         NotificationDetails(android: androidDetails, iOS: iosDetails);
     await localNotification.show(
-      0,
+      notif_id,
       '$notifTitle',
       '$notifMessage',
       generalNotificationDetails,
@@ -245,7 +254,7 @@ class _PageTwoState extends State<PageTwo> {
     );
   }
 
- @override
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -327,9 +336,13 @@ class _PageTwoState extends State<PageTwo> {
               sms.number,
               style: TextStyle(fontSize: 20.0),
             ),
-            subtitle: sms.result_message != '' ? Column(children: [
-              Text(sms.message, style: TextStyle(fontSize: 16.0))
-            ]) : null,
+            subtitle: sms.result_message != ''
+                ? Column(children: [
+                    Text('Message: ' + sms.message,
+                        textAlign: TextAlign.justify,
+                        style: TextStyle(fontSize: 16.0))
+                  ])
+                : null,
             trailing: _buildIcon(sms.rating_number, sms.rating_sms),
             onTap: () {
               _showMyDialog(sms);
