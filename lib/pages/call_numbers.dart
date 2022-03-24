@@ -16,6 +16,7 @@ class PageOne extends StatefulWidget {
 class _PageOneState extends State<PageOne> {
   //This will be the list of entries in the database
   List<Numbers> num = [];
+  int notif_id = 0;
 
   FlutterLocalNotificationsPlugin localNotification2 =
       FlutterLocalNotificationsPlugin();
@@ -53,7 +54,7 @@ class _PageOneState extends State<PageOne> {
           if (post != null) {
             if (post.ratingNum.toInt() == 2) {
               showNotification(
-                  'Alert', 'You have received a spam call from ' + message);
+                  'Alert', 'You have received a spam call from ' + message, notif_id);
             }
             print(post.ratingNum.toInt());
             setState(() {
@@ -66,6 +67,7 @@ class _PageOneState extends State<PageOne> {
               DBProvider.db.insertData(newDBUser, 'numbers');
               print('New message arrived, the message is $newDBUser');
               _getData();
+              notif_id += 1;
             });
           } else {
             setState(() {
@@ -113,7 +115,7 @@ class _PageOneState extends State<PageOne> {
   }
 
   //This is the notification function. It takes a parameters: the title and the message
-  Future showNotification(String notifTitle, String notifMessage) async {
+  Future showNotification(String notifTitle, String notifMessage, int id) async {
     print('received');
     var androidDetails = AndroidNotificationDetails(
       "channelID",
@@ -126,7 +128,7 @@ class _PageOneState extends State<PageOne> {
     var generalNotificationDetails =
         NotificationDetails(android: androidDetails, iOS: iosDetails);
     await localNotification2.show(
-      0,
+      id,
       '$notifTitle',
       '$notifMessage',
       generalNotificationDetails,
