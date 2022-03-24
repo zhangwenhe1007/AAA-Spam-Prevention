@@ -15,7 +15,7 @@ class _PageTwoState extends State<PageTwo> {
   List<Messages> sms = [];
   String _smsMessage = "";
   String _senderNumber = "";
-
+  bool sentData = false;
   FlutterLocalNotificationsPlugin localNotification =
       FlutterLocalNotificationsPlugin();
 
@@ -38,7 +38,7 @@ class _PageTwoState extends State<PageTwo> {
         onSelectNotification: onSelectNotif);
 
     _channel2.setMessageHandler((Object messages) async {
-      bool sentData = false;
+      
       //Convert the Object (type is Internal Linked Map) into a Dart Map object
       Map<int, String> dict = Map<int, String>.from(messages);
 
@@ -74,8 +74,9 @@ class _PageTwoState extends State<PageTwo> {
               rating_number: post.ratingNum.toInt(),
               rating_sms: post.ratingSms.toInt(),
               message: _smsMessage,
-
+              
               //TO-DO
+              times_marked: post.markedNum.toInt(),
             );
             DBProvider.db.insertData(newDBUser, 'messages');
             print('New message! $newDBUser');
