@@ -219,8 +219,16 @@ class _PageOneState extends State<PageOne> {
               title: Text(
                 num.number,
                 style: TextStyle(fontSize: 20.0),
-              ),
-              subtitle: Text(num.result, style: TextStyle(fontSize: 15.0)),
+              ),              
+              subtitle: Column(children: [
+                Text("Location: " + num.result, textAlign: TextAlign.justify, style: TextStyle(fontSize: 15.0)),
+                Text(
+                  'Number marked by ' +
+                      num.times_marked.toString() +
+                      ' user(s)',
+                  textAlign: TextAlign.justify,
+                  style: TextStyle(fontSize: 14.0)),
+              ]),
               trailing: _buildIcon(num.rating),
               onTap: () {
                 _showMyDialog(num);

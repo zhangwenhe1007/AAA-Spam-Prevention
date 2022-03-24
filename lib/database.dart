@@ -69,6 +69,7 @@ class DBProvider {
               rating_sms: maps[i]['ratingSMS'],
               rating_number: maps[i]['ratingNumber'],
               message: maps[i]['message'],
+              times_marked: maps[i]['markedNum'],
             );
           });
       }

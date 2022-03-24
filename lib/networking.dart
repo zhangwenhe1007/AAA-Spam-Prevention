@@ -15,6 +15,7 @@ class GetPostApi {
     print(
         'Successfully sent at' + ' https://serveronrepl.xinlei.repl.co' + link);
     var post = Post.fromJson(json.decode(response.body));
+    print("AAAAA" + post.markedNum.toString());
     return post;
   }
 }
@@ -24,7 +25,7 @@ class Post {
   final String messageSms;
   final int ratingNum;
   final int ratingSms;
-  final int markedNum;
+  int markedNum;
   Post(
       {this.messageNum,
       this.messageSms,
@@ -37,7 +38,7 @@ class Post {
       ratingNum: json['rating_num'],
       messageSms: json['message_sms'],
       ratingSms: json['rating_sms'],
-      markedNum: json['was_marked'],
+      markedNum: json["was_marked"],
     );
   }
 }
