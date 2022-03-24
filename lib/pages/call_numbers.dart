@@ -61,7 +61,7 @@ class _PageOneState extends State<PageOne> {
                 number: message,
                 result: post.messageNum.toString(),
                 rating: post.ratingNum.toInt(),
-                times_marked: post.markedNum.toInt(),
+                times_marked: post.times_marked.toInt(),
               );
               DBProvider.db.insertData(newDBUser, 'numbers');
               print('New message arrived, the message is $newDBUser');
@@ -79,13 +79,13 @@ class _PageOneState extends State<PageOne> {
             print('Network Error');
             _getData();
           });
-          }
-        }, onError: (error) {
+        }}, onError: (error) {
           setState(() {
             var newDBUser = Numbers(
               number: error.toString(),
               result: "",
               rating: 0,
+              times_marked: 0,
             );
             DBProvider.db.insertData(newDBUser, 'numbers');
             print('New message arrived, but there is an error $newDBUser');

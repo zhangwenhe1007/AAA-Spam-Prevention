@@ -36,20 +36,20 @@ class Post {
   final String messageSms;
   final int ratingNum;
   final int ratingSms;
-  int markedNum;
+  final int times_marked;
   Post(
       {this.messageNum,
       this.messageSms,
       this.ratingNum,
       this.ratingSms,
-      this.markedNum});
+      this.times_marked,});
   factory Post.fromJson(Map<String, dynamic> json) {
     return Post(
       messageNum: json['message_num'],
       ratingNum: json['rating_num'],
       messageSms: json['message_sms'],
       ratingSms: json['rating_sms'],
-      markedNum: json["was_marked"],
+      times_marked: json['was_marked'],
     );
   }
 }
