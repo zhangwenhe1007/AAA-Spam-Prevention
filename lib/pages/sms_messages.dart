@@ -76,6 +76,7 @@ class _PageTwoState extends State<PageTwo> {
               message: _smsMessage,
 
               //TO-DO
+              times_marked: post.markedNum.toInt(),
             );
             DBProvider.db.insertData(newDBUser, 'messages');
             print('New message! $newDBUser');
@@ -95,6 +96,7 @@ class _PageTwoState extends State<PageTwo> {
             rating_number: 0,
             rating_sms: 0,
             message: "",
+            times_marked: 0,
           );
           DBProvider.db.insertData(newDBUser, 'messages');
           print('Network Error');
