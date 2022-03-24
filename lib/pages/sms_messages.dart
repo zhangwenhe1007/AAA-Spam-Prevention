@@ -57,9 +57,7 @@ class _PageTwoState extends State<PageTwo> {
           showNotification(
               'ALERT',
               _senderNumber +
-                  ' has previously been marked spam by ' +
-                  post.markedNum.toString() +
-                  ' user(s)! It may be dangerous!');
+                  ' has previously been marked spam by ' + post.markedNum.toString() +' user(s)! It may be dangerous!');
           sentData = true;
         } else if (post.ratingSms.toInt() == 2 && sentData == false) {
           showNotification('Alert', 'SPAM message from ' + _senderNumber + '!');
@@ -76,8 +74,6 @@ class _PageTwoState extends State<PageTwo> {
             message: _smsMessage,
             times_marked: post.markedNum.toInt(),
           );
-          print(post.markedNum.toInt());
-          print(post.markedNum.runtimeType);
           DBProvider.db.insertData(newDBUser, 'messages');
           print('New message! $newDBUser');
           _getData();
@@ -296,7 +292,9 @@ class _PageTwoState extends State<PageTwo> {
             style: TextStyle(fontSize: 20.0),
           ),
           subtitle: Column(children: [
-            Text("Message: " + sms.message, style: TextStyle(fontSize: 16.0))
+            Text("Message Location: " + sms.result_number + sms.result_message,
+                style: TextStyle(fontSize: 15.0)),
+            Text(sms.message, style: TextStyle(fontSize: 13.0))
           ]),
           trailing: _buildIcon(sms.rating_number, sms.rating_sms),
           onTap: () {
@@ -332,8 +330,7 @@ class _PageTwoState extends State<PageTwo> {
                 Text("Update Information?", style: TextStyle(fontSize: 20.0)),
                 Text("", style: (TextStyle(fontSize: 10.0))),
                 Text(
-                    'Is this message spam? If so, the sender will be marked as spam.',
-                    style: TextStyle(fontSize: 15)),
+                    'Is this message spam? If so, the sender will be marked as spam.'),
               ],
             ),
           ),
