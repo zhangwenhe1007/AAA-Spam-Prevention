@@ -50,23 +50,36 @@ class _PageOneState extends State<PageOne> {
 
         //This method sends an http request to server. The post object the a json response.
         api.fetchPost().then((post) {
-          if (post.ratingNum.toInt() == 2) {
-            showNotification(
-                'Alert', 'You have received a spam call from ' + message);
-          }
-
-          print(post.ratingNum.toInt());
-          setState(() {
+          if (post != null) {
+            if (post.ratingNum.toInt() == 2) {
+              showNotification(
+                  'Alert', 'You have received a spam call from ' + message);
+            }
+            print(post.ratingNum.toInt());
+            setState(() {
+              var newDBUser = Numbers(
+                number: message,
+                result: post.messageNum.toString(),
+                rating: post.ratingNum.toInt(),
+                times_marked: post.markedNum.toInt(),
+              );
+              DBProvider.db.insertData(newDBUser, 'numbers');
+              print('New message arrived, the message is $newDBUser');
+              _getData();
+            });
+          } else {
+            setState(() {
             var newDBUser = Numbers(
-              number: message,
-              result: post.messageNum.toString(),
-              rating: post.ratingNum.toInt(),
-              times_marked: post.markedNum.toInt(),
+              number: 'Network Error',
+              result: "",
+              rating: 0,
+              times_marked: 0,
             );
             DBProvider.db.insertData(newDBUser, 'numbers');
-            print('New message arrived, the message is $newDBUser');
+            print('Network Error');
             _getData();
           });
+          }
         }, onError: (error) {
           setState(() {
             var newDBUser = Numbers(
@@ -144,7 +157,12 @@ class _PageOneState extends State<PageOne> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Incoming Numbers'),
+        centerTitle: true,
+        title: Text('AiBert',
+            style: TextStyle(
+              fontSize: 30, fontWeight: FontWeight.w100, // light
+              fontFamily: 'Blue Vinyl',
+            )),
       ),
       body: StreamBuilder<dynamic>(
         stream: _getData(),
@@ -220,7 +238,7 @@ class _PageOneState extends State<PageOne> {
                 num.number,
                 style: TextStyle(fontSize: 20.0),
               ),              
-              subtitle: Column(children: [
+              subtitle: num.result != '' ? Column(children: [
                 Text("Location: " + num.result, textAlign: TextAlign.justify, style: TextStyle(fontSize: 15.0)),
                 Text(
                   'Number marked by ' +
@@ -228,12 +246,12 @@ class _PageOneState extends State<PageOne> {
                       ' user(s)',
                   textAlign: TextAlign.justify,
                   style: TextStyle(fontSize: 14.0)),
-              ]),
+              ]): null,
               trailing: _buildIcon(num.rating),
               onTap: () {
                 _showMyDialog(num);
-              }),
-        ));
+              }),),
+        );
   }
 
   //When the user clicks on a tile, a dialog box opens.

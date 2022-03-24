@@ -4,8 +4,6 @@ import 'pages/sms_messages.dart';
 import 'pages/microphone_icon.dart';
 //import 'package:tflite_flutter/tflite_flutter.dart';
 
-//TO BE FIXED: KEEP THE INCOMING NUMBERS AND MESSAGES SHOWN IN THE APP
-
 //here, I'll define our primary color
 
 void main() {
@@ -18,14 +16,14 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: "AiBert",
       theme: ThemeData(
         appBarTheme: AppBarTheme(
           color: const Color(0xFFD93739),
         ),
         primarySwatch: Colors.red,
       ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+      home: MyHomePage(title: 'AiBert'),
     );
   }
 }
@@ -63,22 +61,22 @@ class _MyHomePageState extends State<MyHomePage> {
         children: _widgetOptions,
       ),
       bottomNavigationBar: BottomNavigationBar(
-        //This changes the font of the labels in the bottom navigation bar, i put it to 0
-        selectedFontSize: 0,
+        showSelectedLabels: false,
+        showUnselectedLabels: false,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.call),
-            label: ' ',
+            label: 'Phone Calls',
             //label: 'Phone Calls',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.sms),
-            label: " ",
+            label: "Messages",
             //label: 'Messages',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.mic),
-            label: ' ',
+            label: 'Vocal Analysis',
 
             //label: 'Vocal Analysis',
           ),
