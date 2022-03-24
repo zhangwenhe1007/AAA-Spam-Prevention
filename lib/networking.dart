@@ -10,13 +10,26 @@ class GetPostApi {
   String link;
   GetPostApi({@required this.link});
 
+  //This is a class method that retuns a Post object (defined by the class below)
   Future<Post> fetchPost() async {
     final response = await http.get(Uri.parse(
         'https://serveronrepl.xinlei.repl.co'+link));
+    if (response.statusCode == 200) {
     print('Successfully sent at' + ' https://serveronrepl.xinlei.repl.co'+link);
+    print('This is response body');
+    print(response.body);
     var post = Post.fromJson(json.decode(response.body));
+    print(post);
     return post;
+    } else {
+      return null;
+    }
   }
+    // print('error caught: $e');
+    // var post = Post.fromJson(json.decode("{message_num: 'Networking Error', rating_num: 'Networking Error', message_sms: 'Networking Error', rating_sms: 'Networking Error'}"));
+    // print('This is post');
+    // print(Post.toString());
+    // return post;
 }
 
 class Post {

@@ -4,8 +4,6 @@ import 'pages/sms_messages.dart';
 import 'pages/microphone_icon.dart';
 //import 'package:tflite_flutter/tflite_flutter.dart';
 
-//TO BE FIXED: KEEP THE INCOMING NUMBERS AND MESSAGES SHOWN IN THE APP
-
 //here, I'll define our primary color
 
 void main() {
@@ -18,14 +16,14 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: "AiBert",
       theme: ThemeData(
         appBarTheme: AppBarTheme(
           color: const Color(0xFFD93739),
         ),
         primarySwatch: Colors.red,
       ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+      home: MyHomePage(title: 'AiBert'),
     );
   }
 }
@@ -63,6 +61,8 @@ class _MyHomePageState extends State<MyHomePage> {
         children: _widgetOptions,
       ),
       bottomNavigationBar: BottomNavigationBar(
+        showSelectedLabels: false,
+        showUnselectedLabels: false,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.call),

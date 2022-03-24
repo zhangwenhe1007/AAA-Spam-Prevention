@@ -27,7 +27,9 @@ class _MicrophonePageState extends State<MicrophonePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Vocal Analysis'),
+        centerTitle: true,
+        title: Text('AiBert', style: TextStyle(fontSize: 30, fontWeight: FontWeight.w100, // light
+    fontFamily: 'Blue Vinyl',)),
       ),
       body: Center(
         child: Container(
