@@ -386,7 +386,7 @@ class _PageTwoState extends State<PageTwo> {
 
           actions: <Widget>[
             Padding(
-              padding: const EdgeInsets.only(right: 75.0),
+              padding: const EdgeInsets.only(right: 25.0),
               child: TextButton(
                 child: Text('Yes', style: TextStyle(fontSize: 20.0)),
                 onPressed: () {
@@ -424,7 +424,19 @@ class _PageTwoState extends State<PageTwo> {
                   Navigator.of(context).pop();
                 },
               ),
-            )
+            ),
+            Padding(
+              padding: const EdgeInsets.only(right: 25.0),
+              child: TextButton(
+                child: Text('Delete', style: TextStyle(fontSize: 20.0)),
+                onPressed: () {
+                  setState(() {
+                    DBProvider.db.deleteData(sms, 'messages');
+                  });
+                  Navigator.of(context).pop();
+                },
+              ),
+            ),
           ],
         );
       },

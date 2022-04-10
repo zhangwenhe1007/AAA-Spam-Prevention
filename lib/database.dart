@@ -92,20 +92,20 @@ class DBProvider {
     );
   }
   
-  /*
-  Future<void> deleteDog(int id) async {
+
+  Future<void> deleteData(object, String name) async {
     // Get a reference to the database.
     final db = await initDB();
 
     // Remove the Dog from the database.
     await db.delete(
-      'numbers',
+      '$name',
       // Use a `where` clause to delete a specific dog.
-      where: 'id = ?',
+      where: 'number = ?',
       // Pass the Dog's id as a whereArg to prevent SQL injection.
-      whereArgs: [id],
+      whereArgs: [object.number],
     );
-  } */
+  }
 
 }
 
