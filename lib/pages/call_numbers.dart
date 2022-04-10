@@ -16,6 +16,7 @@ class PageOne extends StatefulWidget {
 class _PageOneState extends State<PageOne> {
   //This will be the list of entries in the database
   List<Numbers> num = [];
+  int notif_id = 0;
 
   FlutterLocalNotificationsPlugin localNotification2 =
       FlutterLocalNotificationsPlugin();
@@ -50,29 +51,43 @@ class _PageOneState extends State<PageOne> {
 
         //This method sends an http request to server. The post object the a json response.
         api.fetchPost().then((post) {
-        
-          if (post.ratingNum.toInt() == 2) {
-            showNotification(
-                'Alert', 'You have received a spam call from ' + message);
-          }
-
-          print(post.ratingNum.toInt());
-          setState(() {
+          if (post != null) {
+            if (post.ratingNum.toInt() == 2) {
+              showNotification(
+                  'Alert', 'You have received a spam call from ' + message, notif_id);
+            }
+            print(post.ratingNum.toInt());
+            setState(() {
+              var newDBUser = Numbers(
+                number: message,
+                result: post.messageNum.toString(),
+                rating: post.ratingNum.toInt(),
+                times_marked: post.times_marked.toInt(),
+              );
+              DBProvider.db.insertData(newDBUser, 'numbers');
+              print('New message arrived, the message is $newDBUser');
+              _getData();
+              notif_id += 1;
+            });
+          } else {
+            setState(() {
             var newDBUser = Numbers(
-              number: message,
-              result: post.messageNum.toString(),
-              rating: post.ratingNum.toInt(),
+              number: 'Network Error',
+              result: "",
+              rating: 0,
+              times_marked: 0,
             );
             DBProvider.db.insertData(newDBUser, 'numbers');
-            print('New message arrived, the message is $newDBUser');
+            print('Network Error');
             _getData();
           });
-        }, onError: (error) {
+        }}, onError: (error) {
           setState(() {
             var newDBUser = Numbers(
               number: error.toString(),
               result: "",
               rating: 0,
+              times_marked: 0,
             );
             DBProvider.db.insertData(newDBUser, 'numbers');
             print('New message arrived, but there is an error $newDBUser');
@@ -100,7 +115,7 @@ class _PageOneState extends State<PageOne> {
   }
 
   //This is the notification function. It takes a parameters: the title and the message
-  Future showNotification(String notifTitle, String notifMessage) async {
+  Future showNotification(String notifTitle, String notifMessage, int id) async {
     print('received');
     var androidDetails = AndroidNotificationDetails(
       "channelID",
@@ -113,7 +128,7 @@ class _PageOneState extends State<PageOne> {
     var generalNotificationDetails =
         NotificationDetails(android: androidDetails, iOS: iosDetails);
     await localNotification2.show(
-      0,
+      id,
       '$notifTitle',
       '$notifMessage',
       generalNotificationDetails,
@@ -144,7 +159,12 @@ class _PageOneState extends State<PageOne> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Incoming Numbers'),
+        centerTitle: true,
+        title: Text('AiBert',
+            style: TextStyle(
+              fontSize: 30, fontWeight: FontWeight.w100, // light
+              fontFamily: 'Blue Vinyl',
+            )),
       ),
       body: StreamBuilder<dynamic>(
         stream: _getData(),
@@ -165,7 +185,7 @@ class _PageOneState extends State<PageOne> {
                       padding: const EdgeInsets.all(16.0),
                       itemCount: num.length,
                       itemBuilder: (context, i) {
-                        return _buildTile(num[i]);
+                        return _buildTile(num[num.length - (i + 1)]);
                       }),
                 );
               } else {
@@ -206,18 +226,34 @@ class _PageOneState extends State<PageOne> {
   //Each message is a tile
   Widget _buildTile(Numbers num) {
     return Padding(
-      padding: const EdgeInsets.all(4.0),
-      child: ListTile(
-          title: Text(
-            num.number,
-            style: TextStyle(fontSize: 20.0),
+        padding: const EdgeInsets.all(4.0),
+        child: Card(
+          shape: Border(
+            right: BorderSide(
+                color: num.rating == 2
+                    ? Colors.redAccent[100]
+                    : Colors.lightGreenAccent[100],
+                width: 5),
           ),
-          subtitle: Text(num.result, style: TextStyle(fontSize: 15.0)),
-          trailing: _buildIcon(num.rating),
-          onTap: () {
-            _showMyDialog(num);
-          }),
-    );
+          child: ListTile(
+              title: Text(
+                num.number,
+                style: TextStyle(fontSize: 20.0),
+              ),              
+              subtitle: num.result != '' ? Column(children: [
+                Text("Location: " + num.result, textAlign: TextAlign.justify, style: TextStyle(fontSize: 15.0)),
+                Text(
+                  'Number marked by ' +
+                      num.times_marked.toString() +
+                      ' user(s)',
+                  textAlign: TextAlign.justify,
+                  style: TextStyle(fontSize: 14.0)),
+              ]): null,
+              trailing: _buildIcon(num.rating),
+              onTap: () {
+                _showMyDialog(num);
+              }),),
+        );
   }
 
   //When the user clicks on a tile, a dialog box opens.
@@ -239,7 +275,7 @@ class _PageOneState extends State<PageOne> {
           ),
           actions: <Widget>[
             Padding(
-              padding: const EdgeInsets.only(right: 75.0),
+              padding: const EdgeInsets.only(right: 25.0),
               child: TextButton(
                 child: Text('Yes', style: TextStyle(fontSize: 20.0)),
                 onPressed: () {
@@ -269,7 +305,19 @@ class _PageOneState extends State<PageOne> {
                   Navigator.of(context).pop();
                 },
               ),
-            )
+            ),
+            Padding(
+              padding: const EdgeInsets.only(right: 25.0),
+              child: TextButton(
+                child: Text('Delete', style: TextStyle(fontSize: 20.0)),
+                onPressed: () {
+                  setState(() {
+                    DBProvider.db.deleteData(num, 'numbers');
+                  });
+                  Navigator.of(context).pop();
+                },
+              ),
+            ),
           ],
         );
       },

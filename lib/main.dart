@@ -4,7 +4,7 @@ import 'pages/sms_messages.dart';
 import 'pages/microphone_icon.dart';
 //import 'package:tflite_flutter/tflite_flutter.dart';
 
-//TO BE FIXED: KEEP THE INCOMING NUMBERS AND MESSAGES SHOWN IN THE APP
+//here, I'll define our primary color
 
 void main() {
   runApp(MyApp());
@@ -16,11 +16,14 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: "AiBert",
       theme: ThemeData(
+        appBarTheme: AppBarTheme(
+          color: const Color(0xFFD93739),
+        ),
         primarySwatch: Colors.red,
       ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+      home: MyHomePage(title: 'AiBert'),
     );
   }
 }
@@ -35,7 +38,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
   int _selectedIndex = 0;
   static const TextStyle optionStyle =
       TextStyle(fontSize: 30, fontWeight: FontWeight.bold);
@@ -59,18 +61,24 @@ class _MyHomePageState extends State<MyHomePage> {
         children: _widgetOptions,
       ),
       bottomNavigationBar: BottomNavigationBar(
+        showSelectedLabels: false,
+        showUnselectedLabels: false,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.call),
             label: 'Phone Calls',
+            //label: 'Phone Calls',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.sms),
-            label: 'SMS Messages',
+            label: "Messages",
+            //label: 'Messages',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.mic),
             label: 'Vocal Analysis',
+
+            //label: 'Vocal Analysis',
           ),
         ],
         currentIndex: _selectedIndex,

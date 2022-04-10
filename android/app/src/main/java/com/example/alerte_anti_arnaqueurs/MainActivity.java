@@ -26,7 +26,7 @@ import io.flutter.plugin.common.JSONMessageCodec;
 
 public class MainActivity extends FlutterActivity {
 
-    private String[] permissions = {Manifest.permission.READ_PHONE_STATE, Manifest.permission.PROCESS_OUTGOING_CALLS, Manifest.permission.READ_CALL_LOG, Manifest.permission.RECEIVE_SMS};
+    private String[] permissions = {Manifest.permission.READ_PHONE_STATE, Manifest.permission.PROCESS_OUTGOING_CALLS, Manifest.permission.READ_CALL_LOG, Manifest.permission.RECEIVE_SMS, Manifest.permission.READ_CONTACTS};
     private List<String> permissionList = new ArrayList<>();
 
     @Override
