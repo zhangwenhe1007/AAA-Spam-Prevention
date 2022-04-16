@@ -48,6 +48,11 @@ android {
             signingConfig signingConfigs.debug
         }
     }
+    
+// Specify tflite file should not be compressed for the app apk
+    aaptOptions {
+        noCompress "tflite"
+    }
 }
 
 flutter {
@@ -56,6 +61,7 @@ flutter {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation 'com.google.code.gson:gson:2.8.7'
-    
+    implementation 'com.google.code.gson:gson:2.8.7'        
+    implementation 'org.tensorflow:tensorflow-lite-task-text:0.3.0'
+
 }
