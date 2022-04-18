@@ -120,7 +120,7 @@ class _PageOneState extends State<PageOne> {
     var androidDetails = AndroidNotificationDetails(
       "channelID",
       "Local Notification",
-      "This is the description of the Notification, can be changed",
+      //"This is the description of the Notification, can be changed",
       priority: Priority.high,
       importance: Importance.max,
     );
