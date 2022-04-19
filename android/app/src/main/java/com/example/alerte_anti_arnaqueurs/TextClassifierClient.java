@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 import org.tensorflow.lite.support.label.Category;
 
 
@@ -28,7 +29,6 @@ public class TextClassifierClient{
     private static final String TAG = "TaskApi";
 
     public static final String MODELFILE = "model.tflite";
-    String input;
 
     //i am declaring a global variable that will be my classifier
     BertNLClassifier classifier;
@@ -38,8 +38,8 @@ public class TextClassifierClient{
     private final Context context;
     
     // constructor class:
-    public TextClassifierClient(Context context){
-        this.context = context;
+    public TextClassifierClient(Context contextGiven){
+        this.context = contextGiven;
     }
     
     // //this is the intialization method, that I call before i start my code
@@ -62,6 +62,7 @@ public class TextClassifierClient{
     // }
 
 //this is the same code as before, without the different options, as it might uselessly increase the power needed to run
+   //BEFORE CLASSIFYING YOU HAVE TO LOAD THE MODEL!
     public void load(){
         try{
         classifier =
@@ -93,6 +94,8 @@ public class TextClassifierClient{
 
     public List<Category> predicting(String input){
         // Run inference
+        System.out.println("hiii");
+        System.out.println(input);
         List<Category> results = classifier.classify(input);
 
         //printing the elements in the list:

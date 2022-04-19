@@ -23,6 +23,7 @@ import io.flutter.plugin.common.BasicMessageChannel;
 import io.flutter.plugin.common.StandardMessageCodec;
 import io.flutter.plugin.common.JSONMessageCodec;
 
+import org.tensorflow.lite.support.label.Category;
 
 
 public class MainActivity extends FlutterActivity {
@@ -31,7 +32,9 @@ public class MainActivity extends FlutterActivity {
     private List<String> permissionList = new ArrayList<>();
     
     private static Context context;
+
     //just created a method to get the app context
+        //https://stackoverflow.com/questions/2002288/static-way-to-get-context-in-android
     public static Context getAppContext() {
         return MainActivity.context;
     }
@@ -40,18 +43,22 @@ public class MainActivity extends FlutterActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
+
         MainActivity.context = getApplicationContext();
 
-        TextClassifierClient test = new TextClassifierClient(MainActivity.context);
-        test.predicting("Hello, this is james!!!");
+        TextClassifierClient test = new TextClassifierClient(MainActivity.getAppContext());
 
         Handler handler = new Handler() {
             public void handleMessage (final Message msg){
-                
+                 System.out.println("HAAAAAHHHHHHHH");
 
-                if (msg.what == 0){
-                    System.out.println("HAAAAAHHHHHHHH");
+                 //OMG don't forget to load the model!!!
+                 test.load();
+                 List<Category> results = test.predicting(msg.obj.toString());
+                 System.out.println("Label is: " + results.get(0).getLabel() + " message is: " + results.get(0).getDisplayName() + "Score: " + results.get(0).getScore());
+                 test.unload();
+
+                 if (msg.what == 0){              
                     System.out.println(msg.obj.toString() + " is passed to MainActivity");
                     String phoneNumber = msg.obj.toString();
                     BasicMessageChannel MessageChannel = new BasicMessageChannel<Object>(getFlutterEngine().getDartExecutor().getBinaryMessenger(), "com.appNumber/demo", StandardMessageCodec.INSTANCE);
