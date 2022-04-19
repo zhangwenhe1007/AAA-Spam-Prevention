@@ -1,3 +1,9 @@
+/*
+A few notes on the model itself:
+
+*/
+
+
 //ok i need to import the package that i declared in build.gradle
 //then i can use the tflite functions of the BERTNLClassifier.java file that is on the github page!
     //https://github.com/tensorflow/tflite-support/blob/master/tensorflow_lite_support/java/src/java/org/tensorflow/lite/task/text/nlclassifier/BertNLClassifier.java
