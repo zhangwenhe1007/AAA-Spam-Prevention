@@ -1,11 +1,12 @@
 package com.example.alerte_anti_arnaqueurs;
-
 import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.widget.Toast;
+
+import android.content.Context;
 
 import androidx.annotation.Nullable;
 import androidx.annotation.NonNull;
@@ -22,20 +23,42 @@ import io.flutter.plugin.common.BasicMessageChannel;
 import io.flutter.plugin.common.StandardMessageCodec;
 import io.flutter.plugin.common.JSONMessageCodec;
 
+import org.tensorflow.lite.support.label.Category;
 
 
 public class MainActivity extends FlutterActivity {
 
     private String[] permissions = {Manifest.permission.READ_PHONE_STATE, Manifest.permission.PROCESS_OUTGOING_CALLS, Manifest.permission.READ_CALL_LOG, Manifest.permission.RECEIVE_SMS, Manifest.permission.READ_CONTACTS};
     private List<String> permissionList = new ArrayList<>();
+    
+    private static Context context;
 
+    //just created a method to get the app context
+        //https://stackoverflow.com/questions/2002288/static-way-to-get-context-in-android
+    public static Context getAppContext() {
+        return MainActivity.context;
+    }
+
+    //the onCreate() function gets runned everytime the app is opened
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        MainActivity.context = getApplicationContext();
+
+        TextClassifierClient test = new TextClassifierClient(MainActivity.getAppContext());
+
         Handler handler = new Handler() {
             public void handleMessage (final Message msg){
-                if (msg.what == 0){
+                 System.out.println("HAAAAAHHHHHHHH");
+
+                 //OMG don't forget to load the model!!!
+                 test.load();
+                 List<Category> results = test.predicting(msg.obj.toString());
+                 System.out.println("Label is: " + results.get(0).getLabel() + " message is: " + results.get(0).getDisplayName() + "Score: " + results.get(0).getScore());
+                 test.unload();
+
+                 if (msg.what == 0){              
                     System.out.println(msg.obj.toString() + " is passed to MainActivity");
                     String phoneNumber = msg.obj.toString();
                     BasicMessageChannel MessageChannel = new BasicMessageChannel<Object>(getFlutterEngine().getDartExecutor().getBinaryMessenger(), "com.appNumber/demo", StandardMessageCodec.INSTANCE);

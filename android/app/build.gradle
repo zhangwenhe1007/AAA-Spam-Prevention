@@ -26,7 +26,7 @@ apply plugin: 'kotlin-android'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 android {
-    compileSdkVersion 30
+    compileSdkVersion 31
 
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
@@ -35,7 +35,7 @@ android {
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId "com.example.alerte_anti_arnaqueurs"
-        minSdkVersion 16
+        minSdkVersion 21
         targetSdkVersion 30
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
@@ -48,6 +48,12 @@ android {
             signingConfig signingConfigs.debug
         }
     }
+
+    // Specify tflite file should not be compressed for the app apk
+    aaptOptions {
+        noCompress "tflite"
+    }
+    
 }
 
 flutter {
@@ -56,6 +62,7 @@ flutter {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation 'com.google.code.gson:gson:2.8.7'
-    
+    implementation 'com.google.code.gson:gson:2.8.7'        
+    implementation 'org.tensorflow:tensorflow-lite-task-text:0.3.0'
+
 }
