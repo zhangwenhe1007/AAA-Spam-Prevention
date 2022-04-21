@@ -35,18 +35,18 @@ import org.tensorflow.lite.support.label.Category;
 public class MainActivity extends FlutterActivity {
     //private static final String AUDIO_FILE_PATH = MainActivity.class.getResource("/").getPath()+"/audio/Recording.m4a";
 
-    String path = "src/main/resources/audio/Recording.m4a";
-    File file = new File(path);
-    String absolutePath = file.getAbsolutePath();
+    // String path = "src/main/resources/audio/Recording.m4a";
+    // File file = new File(path);
+    // String absolutePath = file.getAbsolutePath();
     
     private String[] permissions = {Manifest.permission.READ_PHONE_STATE, Manifest.permission.PROCESS_OUTGOING_CALLS, Manifest.permission.READ_CALL_LOG, Manifest.permission.RECEIVE_SMS, Manifest.permission.READ_CONTACTS};
     private List<String> permissionList = new ArrayList<>();
     
     private static Context context;
-    SpeechRecognition recognizer;
+    // SpeechRecognition recognizer;
 
-    static final String CHANNEL = "com.flutter.speech/speech";
-    private MethodChannel channel;
+    // static final String CHANNEL = "com.flutter.speech/speech";
+    // private MethodChannel channel;
 
     //just created a method to get the app context
         //https://stackoverflow.com/questions/2002288/static-way-to-get-context-in-android
@@ -54,35 +54,35 @@ public class MainActivity extends FlutterActivity {
         return MainActivity.context;
     }
 
-    @Override
-    public void configureFlutterEngine(@NonNull FlutterEngine flutterEngine) {
-        super.configureFlutterEngine(flutterEngine);
+    // @Override
+    // public void configureFlutterEngine(@NonNull FlutterEngine flutterEngine) {
+    //     super.configureFlutterEngine(flutterEngine);
 
-        BinaryMessenger messenger = flutterEngine.getDartExecutor().getBinaryMessenger();
-        channel = new MethodChannel(messenger, CHANNEL);
+    //     BinaryMessenger messenger = flutterEngine.getDartExecutor().getBinaryMessenger();
+    //     channel = new MethodChannel(messenger, CHANNEL);
 
-        channel.setMethodCallHandler(
-            (call, result) -> {
-                if (call.method.equals("Printy")) {
-                    Map<String, String> arguments = call.arguments();
-                    String name = arguments.get("name");
+    //     channel.setMethodCallHandler(
+    //         (call, result) -> {
+    //             if (call.method.equals("Printy")) {
+    //                 Map<String, String> arguments = call.arguments();
+    //                 String name = arguments.get("name");
 
-                    SpeechRecognition recognizer = new SpeechRecognition("deaf65c1", "43e3e7cd1af6bd370964af0dc94e7a7a");
+    //                 SpeechRecognition recognizer = new SpeechRecognition("deaf65c1", "43e3e7cd1af6bd370964af0dc94e7a7a");
 
-                    try {
-                        recognizer.performance(absolutePath);
-                    } catch (Exception e) {
-                        System.out.println(e);
-                    }
+    //                 try {
+    //                     recognizer.performance(absolutePath);
+    //                 } catch (Exception e) {
+    //                     System.out.println(e);
+    //                 }
 
 
-                    result.success(name+"says that you have done it");
-                } else {
-                    result.notImplemented();
-                }
-            }
-        );
-    }
+    //                 result.success(name+"says that you have done it");
+    //             } else {
+    //                 result.notImplemented();
+    //             }
+    //         }
+    //     );
+    // }
 
     //the onCreate() function gets runned everytime the app is opened
     @Override

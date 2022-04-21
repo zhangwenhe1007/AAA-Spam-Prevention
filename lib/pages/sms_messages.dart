@@ -264,7 +264,7 @@ class _PageTwoState extends State<PageTwo> {
             style: TextStyle(
               fontSize: 30, fontWeight: FontWeight.w100, // light
               fontFamily: 'Blue Vinyl',
-            )),
+            ),),
       ),
       body: StreamBuilder<dynamic>(
         stream: _getData(),
