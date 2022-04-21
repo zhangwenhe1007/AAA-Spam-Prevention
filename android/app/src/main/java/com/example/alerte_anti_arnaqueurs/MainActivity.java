@@ -16,6 +16,8 @@ import androidx.core.content.ContextCompat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.io.File; 
 
 import io.flutter.embedding.android.FlutterActivity;
 import io.flutter.embedding.engine.FlutterEngine;
@@ -23,15 +25,28 @@ import io.flutter.plugin.common.BasicMessageChannel;
 import io.flutter.plugin.common.StandardMessageCodec;
 import io.flutter.plugin.common.JSONMessageCodec;
 
+import io.flutter.plugin.common.MethodChannel;
+import io.flutter.plugin.common.BinaryMessenger;
+import io.flutter.plugin.common.MethodCall;
+
 import org.tensorflow.lite.support.label.Category;
 
 
 public class MainActivity extends FlutterActivity {
+    //private static final String AUDIO_FILE_PATH = MainActivity.class.getResource("/").getPath()+"/audio/Recording.m4a";
 
+    String path = "src/main/resources/audio/Recording.m4a";
+    File file = new File(path);
+    String absolutePath = file.getAbsolutePath();
+    
     private String[] permissions = {Manifest.permission.READ_PHONE_STATE, Manifest.permission.PROCESS_OUTGOING_CALLS, Manifest.permission.READ_CALL_LOG, Manifest.permission.RECEIVE_SMS, Manifest.permission.READ_CONTACTS};
     private List<String> permissionList = new ArrayList<>();
     
     private static Context context;
+    SpeechRecognition recognizer;
+
+    static final String CHANNEL = "com.flutter.speech/speech";
+    private MethodChannel channel;
 
     //just created a method to get the app context
         //https://stackoverflow.com/questions/2002288/static-way-to-get-context-in-android
@@ -39,10 +54,53 @@ public class MainActivity extends FlutterActivity {
         return MainActivity.context;
     }
 
+    @Override
+    public void configureFlutterEngine(@NonNull FlutterEngine flutterEngine) {
+        super.configureFlutterEngine(flutterEngine);
+
+        BinaryMessenger messenger = flutterEngine.getDartExecutor().getBinaryMessenger();
+        channel = new MethodChannel(messenger, CHANNEL);
+
+        channel.setMethodCallHandler(
+            (call, result) -> {
+                if (call.method.equals("Printy")) {
+                    Map<String, String> arguments = call.arguments();
+                    String name = arguments.get("name");
+
+                    SpeechRecognition recognizer = new SpeechRecognition("deaf65c1", "43e3e7cd1af6bd370964af0dc94e7a7a");
+
+                    try {
+                        recognizer.performance(absolutePath);
+                    } catch (Exception e) {
+                        System.out.println(e);
+                    }
+
+
+                    result.success(name+"says that you have done it");
+                } else {
+                    result.notImplemented();
+                }
+            }
+        );
+    }
+
     //the onCreate() function gets runned everytime the app is opened
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //GeneratedPluginRegistrant.registerWith(flutterEngine);
+        
+        
+
+        // new MethodChannel(getFlutterEngine().getDartExecutor().getBinaryMessenger(), CHANNEL).setMethodCallHandler(new MethodChannel.MethodCallHandler() {
+        //     @Override
+        //     public void onMethodCall(MethodCall methodCall, MethodChannel.Result result) {
+        //         if (methodCall.method.equals("Printy")) {
+        //             result.success("Hi From Java");
+        //         }
+        //     }
+        // });
+        
 
         MainActivity.context = getApplicationContext();
 
@@ -100,6 +158,7 @@ public class MainActivity extends FlutterActivity {
 
         };
 
+
         MyBroadcastReceiver.handler = handler;
 
         for (String permission : permissions) {
@@ -111,6 +170,7 @@ public class MainActivity extends FlutterActivity {
         if (!permissionList.isEmpty()) {
             ActivityCompat.requestPermissions(this, permissionList.toArray(new String[permissionList.size()]), 1000);
         }
+        
     }
 
     @Override

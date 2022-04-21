@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'dart:async';
 
 class MicrophonePage extends StatefulWidget {
@@ -7,6 +8,8 @@ class MicrophonePage extends StatefulWidget {
 }
 
 class _MicrophonePageState extends State<MicrophonePage> {
+  static const platform = const MethodChannel("com.flutter.speech/speech");
+
 
   Future<void> _showMyDialog() async {
     return showDialog<void>(
@@ -21,6 +24,20 @@ class _MicrophonePageState extends State<MicrophonePage> {
         );
       }
     );
+  } 
+
+  Future Printy() async {
+    String value;
+    final arguments = {'name': 'Wenhe'};
+
+    try {
+      value = await platform.invokeMethod('Printy', arguments);
+    } catch (e) {
+      print('This is the message');
+      print(e);
+    }
+
+    print(value);
   }
 
   @override
@@ -36,7 +53,9 @@ class _MicrophonePageState extends State<MicrophonePage> {
           width: 150.0,
           height: 150.0,
           child: FloatingActionButton(
-          onPressed: _showMyDialog,
+          onPressed: () {
+            Printy();
+          },
           child: Icon(Icons.mic, size: 50.0),
         ),
         ),
