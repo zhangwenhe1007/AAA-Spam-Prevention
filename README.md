@@ -1,6 +1,6 @@
 # Alerte Anti Arnaqueurs
 
 A mobile application that detects and prevents spam calls and messages.
-Built using Java, Flutter/Dart, and Python TensorFlow
+Client-side built using Java and Flutter/Dart.
 
 
