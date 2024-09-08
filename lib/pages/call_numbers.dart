@@ -16,6 +16,7 @@ class PageOne extends StatefulWidget {
 class _PageOneState extends State<PageOne> {
   //This will be the list of entries in the database
   List<Numbers> num = [];
+  int notif_id = 0;
 
   FlutterLocalNotificationsPlugin localNotification2 =
       FlutterLocalNotificationsPlugin();
@@ -53,7 +54,7 @@ class _PageOneState extends State<PageOne> {
           if (post != null) {
             if (post.ratingNum.toInt() == 2) {
               showNotification(
-                  'Alert', 'You have received a spam call from ' + message);
+                  'Alert', 'You have received a spam call from ' + message, notif_id);
             }
             print(post.ratingNum.toInt());
             setState(() {
@@ -61,11 +62,12 @@ class _PageOneState extends State<PageOne> {
                 number: message,
                 result: post.messageNum.toString(),
                 rating: post.ratingNum.toInt(),
-                times_marked: post.markedNum.toInt(),
+                times_marked: post.times_marked.toInt(),
               );
               DBProvider.db.insertData(newDBUser, 'numbers');
               print('New message arrived, the message is $newDBUser');
               _getData();
+              notif_id += 1;
             });
           } else {
             setState(() {
@@ -79,13 +81,13 @@ class _PageOneState extends State<PageOne> {
             print('Network Error');
             _getData();
           });
-          }
-        }, onError: (error) {
+        }}, onError: (error) {
           setState(() {
             var newDBUser = Numbers(
               number: error.toString(),
               result: "",
               rating: 0,
+              times_marked: 0,
             );
             DBProvider.db.insertData(newDBUser, 'numbers');
             print('New message arrived, but there is an error $newDBUser');
@@ -113,12 +115,12 @@ class _PageOneState extends State<PageOne> {
   }
 
   //This is the notification function. It takes a parameters: the title and the message
-  Future showNotification(String notifTitle, String notifMessage) async {
+  Future showNotification(String notifTitle, String notifMessage, int id) async {
     print('received');
     var androidDetails = AndroidNotificationDetails(
       "channelID",
       "Local Notification",
-      "This is the description of the Notification, can be changed",
+      //"This is the description of the Notification, can be changed",
       priority: Priority.high,
       importance: Importance.max,
     );
@@ -126,7 +128,7 @@ class _PageOneState extends State<PageOne> {
     var generalNotificationDetails =
         NotificationDetails(android: androidDetails, iOS: iosDetails);
     await localNotification2.show(
-      0,
+      id,
       '$notifTitle',
       '$notifMessage',
       generalNotificationDetails,
@@ -273,7 +275,7 @@ class _PageOneState extends State<PageOne> {
           ),
           actions: <Widget>[
             Padding(
-              padding: const EdgeInsets.only(right: 75.0),
+              padding: const EdgeInsets.only(right: 25.0),
               child: TextButton(
                 child: Text('Yes', style: TextStyle(fontSize: 20.0)),
                 onPressed: () {
@@ -303,7 +305,19 @@ class _PageOneState extends State<PageOne> {
                   Navigator.of(context).pop();
                 },
               ),
-            )
+            ),
+            Padding(
+              padding: const EdgeInsets.only(right: 25.0),
+              child: TextButton(
+                child: Text('Delete', style: TextStyle(fontSize: 20.0)),
+                onPressed: () {
+                  setState(() {
+                    DBProvider.db.deleteData(num, 'numbers');
+                  });
+                  Navigator.of(context).pop();
+                },
+              ),
+            ),
           ],
         );
       },

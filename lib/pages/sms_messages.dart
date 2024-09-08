@@ -12,9 +12,11 @@ class PageTwo extends StatefulWidget {
 }
 
 class _PageTwoState extends State<PageTwo> {
+  bool sentData = false;
   List<Messages> sms = [];
   String _smsMessage = "";
   String _senderNumber = "";
+  int notif_id = 0;
 
   FlutterLocalNotificationsPlugin localNotification =
       FlutterLocalNotificationsPlugin();
@@ -38,7 +40,6 @@ class _PageTwoState extends State<PageTwo> {
         onSelectNotification: onSelectNotif);
 
     _channel2.setMessageHandler((Object messages) async {
-      bool sentData = false;
       //Convert the Object (type is Internal Linked Map) into a Dart Map object
       Map<int, String> dict = Map<int, String>.from(messages);
 
@@ -58,12 +59,17 @@ class _PageTwoState extends State<PageTwo> {
             showNotification(
                 'ALERT',
                 _senderNumber +
-                    ' has previously been marked spam! It may be dangerous!');
-            sentData = true;
+                    ' has previously been marked spam! It may be dangerous!',
+                notif_id);
+            setState(() {
+              sentData = true;
+            });
           } else if (post.ratingSms.toInt() == 2 && sentData == false) {
             showNotification(
-                'Alert', 'SPAM message from ' + _senderNumber + '!');
-            sentData = true;
+                'Alert', 'SPAM message from ' + _senderNumber + '!', notif_id);
+            setState(() {
+              sentData = true;
+            });
           }
 
           setState(() {
@@ -74,8 +80,8 @@ class _PageTwoState extends State<PageTwo> {
               rating_number: post.ratingNum.toInt(),
               rating_sms: post.ratingSms.toInt(),
               message: _smsMessage,
-
               //TO-DO
+              times_marked: post.times_marked.toInt(),
             );
             DBProvider.db.insertData(newDBUser, 'messages');
             print('New message! $newDBUser');
@@ -85,21 +91,27 @@ class _PageTwoState extends State<PageTwo> {
             String rating1 = post.ratingSms == 2 ? 'spam' : 'ham';
             GetPostApi(link: '/addmessage?sms=$_smsMessage&rating=$rating1')
                 .fetchPost();
+            notif_id += 1;
+            sentData = false;
           });
         } else {
           setState(() {
-          var newDBUser = Messages(
-            number: 'Network Error',
-            result_number: "",
-            result_message: "",
-            rating_number: 0,
-            rating_sms: 0,
-            message: "",
-          );
-          DBProvider.db.insertData(newDBUser, 'messages');
-          print('Network Error');
-          _getData();
-        });
+            var newDBUser = Messages(
+              number: 'Network Error',
+              result_number: "",
+              result_message: "",
+              rating_number: 0,
+              rating_sms: 0,
+              message: "",
+              times_marked: 0,
+            );
+            DBProvider.db.insertData(newDBUser, 'messages');
+            print('New message! $newDBUser');
+            _getData();
+            //This sends the message to our message database with the prediction made by the model.
+            //We must turn the prediction into string spam or ham, because the labels in database are strings
+            sentData = false;
+          });
         }
       }, onError: (error) {
         setState(() {
@@ -115,6 +127,7 @@ class _PageTwoState extends State<PageTwo> {
           DBProvider.db.insertData(newDBUser, 'messages');
           print('New message received, but an error occured. $newDBUser');
           _getData();
+          sentData = false;
         });
       });
 
@@ -203,12 +216,13 @@ class _PageTwoState extends State<PageTwo> {
     yield _userData;
   }
 
-  Future showNotification(String notifTitle, String notifMessage) async {
+  Future showNotification(
+      String notifTitle, String notifMessage, notif_id) async {
     print('Notification has been deployed');
     var androidDetails = AndroidNotificationDetails(
       "channelID",
       "Local Notification",
-      "This is the description of the Notification, can be changed",
+      //"This is the description of the Notification, can be changed",
       priority: Priority.high,
       importance: Importance.max,
     );
@@ -216,7 +230,7 @@ class _PageTwoState extends State<PageTwo> {
     var generalNotificationDetails =
         NotificationDetails(android: androidDetails, iOS: iosDetails);
     await localNotification.show(
-      0,
+      notif_id,
       '$notifTitle',
       '$notifMessage',
       generalNotificationDetails,
@@ -322,11 +336,13 @@ class _PageTwoState extends State<PageTwo> {
               sms.number,
               style: TextStyle(fontSize: 20.0),
             ),
-            subtitle: sms.result_message != '' ? Column(children: [
-              Text("Message Location: " + sms.result_number + sms.result_message,
-                  style: TextStyle(fontSize: 15.0)),
-              Text(sms.message, style: TextStyle(fontSize: 13.0))
-            ]) : null,
+            subtitle: sms.result_message != ''
+                ? Column(children: [
+                    Text('Message: ' + sms.message,
+                        textAlign: TextAlign.justify,
+                        style: TextStyle(fontSize: 16.0))
+                  ])
+                : null,
             trailing: _buildIcon(sms.rating_number, sms.rating_sms),
             onTap: () {
               _showMyDialog(sms);
@@ -370,7 +386,7 @@ class _PageTwoState extends State<PageTwo> {
 
           actions: <Widget>[
             Padding(
-              padding: const EdgeInsets.only(right: 75.0),
+              padding: const EdgeInsets.only(right: 25.0),
               child: TextButton(
                 child: Text('Yes', style: TextStyle(fontSize: 20.0)),
                 onPressed: () {
@@ -408,7 +424,19 @@ class _PageTwoState extends State<PageTwo> {
                   Navigator.of(context).pop();
                 },
               ),
-            )
+            ),
+            Padding(
+              padding: const EdgeInsets.only(right: 25.0),
+              child: TextButton(
+                child: Text('Delete', style: TextStyle(fontSize: 20.0)),
+                onPressed: () {
+                  setState(() {
+                    DBProvider.db.deleteData(sms, 'messages');
+                  });
+                  Navigator.of(context).pop();
+                },
+              ),
+            ),
           ],
         );
       },

@@ -16,10 +16,10 @@ class DBProvider {
         join(await getDatabasesPath(), 'numbers_database.db'),
         onCreate: (db, version) async {
           await db.execute(
-            'CREATE TABLE numbers(number TEXT PRIMARY KEY, result TEXT, rating INTEGER)',
+            'CREATE TABLE numbers(number TEXT PRIMARY KEY, result TEXT, rating INTEGER, times_marked INTEGER)',
           );
           await db.execute(
-            'CREATE TABLE messages(number TEXT PRIMARY KEY, message TEXT, result_number TEXT, result_message TEXT, ratingNumber INTEGER, ratingSMS INTEGER)',
+            'CREATE TABLE messages(number TEXT PRIMARY KEY, message TEXT, result_number TEXT, result_message TEXT, ratingNumber INTEGER, ratingSMS INTEGER, times_marked INTEGER)',
           );
         },
         version: 1,
@@ -58,6 +58,7 @@ class DBProvider {
               number: maps[i]['number'],
               result: maps[i]['result'],
               rating: maps[i]['rating'],
+              times_marked: maps[i]['times_marked'],
             );
           });
       } else {
@@ -69,7 +70,7 @@ class DBProvider {
               rating_sms: maps[i]['ratingSMS'],
               rating_number: maps[i]['ratingNumber'],
               message: maps[i]['message'],
-              times_marked: maps[i]['markedNum']
+              times_marked: maps[i]['times_marked'],
             );
           });
       }
@@ -91,20 +92,20 @@ class DBProvider {
     );
   }
   
-  /*
-  Future<void> deleteDog(int id) async {
+
+  Future<void> deleteData(object, String name) async {
     // Get a reference to the database.
     final db = await initDB();
 
     // Remove the Dog from the database.
     await db.delete(
-      'numbers',
+      '$name',
       // Use a `where` clause to delete a specific dog.
-      where: 'id = ?',
+      where: 'number = ?',
       // Pass the Dog's id as a whereArg to prevent SQL injection.
-      whereArgs: [id],
+      whereArgs: [object.number],
     );
-  } */
+  }
 
 }
 

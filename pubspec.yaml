@@ -28,12 +28,12 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
-  flutter_local_notifications: ^5.0.0+1
+  flutter_local_notifications: ^9.4.0
   http: ^0.13.1
   csv: ^5.0.0
   path_provider:
   sqflite:
-  file_picker: ^3.0.3
+  file_picker: ^4.5.1
 
   #here, i am including the tflite package necessary to support the BERT deep learning model
   tflite_flutter: ^0.9.0
@@ -72,14 +72,14 @@ flutter:
   fonts:
     - family: Blue Vinyl
       fonts:
-        - asset: assets/blue_vinyl_regular.otf
         - asset: assets/blue_vinyl_bold.otf
+        - asset: assets/blue_vinyl_regular.otf
           style: italic
-    # - family: Trajan Pro
-    #   fonts:
-    #     - asset: fonts/TrajanPro.ttf
-    #     - asset: fonts/TrajanPro_Bold.ttf
-    #       weight: 700
+  #   - family: Trajan Pro
+  #     fonts:
+  #       - asset: fonts/TrajanPro.ttf
+  #       - asset: fonts/TrajanPro_Bold.ttf
+  #         weight: 700
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
